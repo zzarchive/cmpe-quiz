@@ -7,7 +7,7 @@ export function useConfig() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('data/config.json')
+    fetch('data/config.json', { cache: 'no-cache' })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();

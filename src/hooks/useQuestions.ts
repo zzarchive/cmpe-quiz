@@ -12,12 +12,12 @@ export function useQuestions(config: AppConfig | null) {
 
     Promise.all([
       ...config.courses.map(async (c) => {
-        const r = await fetch(c.questionFile);
+        const r = await fetch(c.questionFile, { cache: 'no-cache' });
         if (!r.ok) throw new Error(`Failed to load ${c.questionFile}`);
         return [c.id, await r.json()] as const;
       }),
       ...config.courses.filter((c) => c.formulaFile).map(async (c) => {
-        const r = await fetch(c.formulaFile!);
+        const r = await fetch(c.formulaFile!, { cache: 'no-cache' });
         if (!r.ok) return null;
         return [c.id, await r.json()] as const;
       }),

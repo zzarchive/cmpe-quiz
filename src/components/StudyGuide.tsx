@@ -21,7 +21,7 @@ export function StudyGuide({ guides, onClose }: StudyGuideProps) {
     setError(null);
     setContent(null);
     try {
-      const resp = await fetch(file);
+      const resp = await fetch(file, { cache: 'no-cache' });
       if (!resp.ok) throw new Error(`Failed to load guide`);
       const text = await resp.text();
       const html = file.endsWith('.md') ? renderMarkdown(text) : text;
