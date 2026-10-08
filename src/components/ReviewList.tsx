@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import type { Answer } from '../types';
 import { formatTime } from '../utils/formatTime';
+import { typesetMath } from '../utils/mathjax';
 
 interface ReviewListProps {
   answers: Answer[];
@@ -11,6 +12,14 @@ type Filter = 'all' | 'correct' | 'wrong';
 export function ReviewList({ answers }: ReviewListProps) {
   const [filter, setFilter] = useState<Filter>('all');
   const [searchTier, setSearchTier] = useState<string>('all');
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      typesetMath(listRef.current);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [answers, filter, searchTier]);
 
   const tiers = useMemo(() => {
     const t = new Set(answers.map((a) => a.question.tier?.replace(/^Tier \d+ — /, '') || 'General'));
@@ -28,7 +37,7 @@ export function ReviewList({ answers }: ReviewListProps) {
   }, [answers, filter, searchTier]);
 
   return (
-    <div className="review-section">
+    <div className="review-section" ref={listRef}>
       <h3 className="review-title">Review Answers</h3>
       <div className="review-controls">
         <div className="review-filters">

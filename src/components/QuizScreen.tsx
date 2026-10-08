@@ -17,16 +17,7 @@ interface QuizScreenProps {
   onExit: () => void;
 }
 
-function typesetMath() {
-  const mj = window.MathJax;
-  if (mj?.typesetPromise) {
-    if (mj.startup?.document) {
-      mj.startup.document.clear();
-      mj.startup.document.updateDocument();
-    }
-    mj.typesetPromise().catch(() => {});
-  }
-}
+import { typesetMath } from '../utils/mathjax';
 
 export function QuizScreen({
   questions,
@@ -57,9 +48,16 @@ export function QuizScreen({
     }
   }, [currentIndex]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (q) typesetMath();
-  }, [q, currentIndex, prevAnswer]);
+    if (q) {
+      const timer = setTimeout(() => {
+        typesetMath(containerRef.current);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [q, currentIndex, prevAnswer, hasAnswered]);
 
   const handleSelect = useCallback((letter: string) => {
     if (hasAnswered) return;
@@ -71,7 +69,7 @@ export function QuizScreen({
   if (!q) return null;
 
   return (
-    <div className="screen-content">
+    <div className="screen-content" ref={containerRef}>
       <div className="quiz-top">
         <span className="quiz-course-label">{courseTitle}</span>
       </div>

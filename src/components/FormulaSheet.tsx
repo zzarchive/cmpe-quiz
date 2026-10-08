@@ -6,13 +6,14 @@ interface FormulaSheetProps {
   onClose: () => void;
 }
 
-function typesetMath() {
-  window.MathJax?.typesetPromise?.().catch(() => {});
-}
+import { typesetMath } from '../utils/mathjax';
 
 export function FormulaSheet({ formulas, onClose }: FormulaSheetProps) {
   useEffect(() => {
-    typesetMath();
+    const timer = setTimeout(() => {
+      typesetMath();
+    }, 50);
+    return () => clearTimeout(timer);
   }, [formulas]);
 
   if (!formulas || formulas.length === 0) return null;
