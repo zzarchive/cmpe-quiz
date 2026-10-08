@@ -5,6 +5,9 @@ export interface Question {
   answer: string;
   explanation: string;
   tier: string;
+  optionContext?: Record<string, string>;
+  lectureReference?: string;
+  keyConcept?: string;
 }
 
 export interface FormulaItem {

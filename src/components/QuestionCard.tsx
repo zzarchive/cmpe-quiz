@@ -49,7 +49,15 @@ export function QuestionCard({
               disabled={showResult}
             >
               <span className="option-letter">{letter}</span>
-              <span className="option-text">{question.options[letter]}</span>
+              <div className="option-content">
+                <span className="option-text">{question.options[letter]}</span>
+                {showResult && question.optionContext?.[letter] && (
+                  <div className={`option-context ${isCorrect ? 'context-correct' : 'context-distractor'}`}>
+                    <span className="context-badge">{isCorrect ? '✓ Why this is correct' : '✗ Why this is incorrect'}</span>
+                    <span className="context-desc">{question.optionContext[letter]}</span>
+                  </div>
+                )}
+              </div>
             </button>
           );
         })}

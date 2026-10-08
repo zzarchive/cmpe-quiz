@@ -103,6 +103,22 @@ export function QuizScreen({
             <span className="feedback-time">⏱ {formatTime(prevAnswer.timeSpent)}</span>
           </div>
           <p className="feedback-explanation">{q.explanation}</p>
+          {(q.lectureReference || q.keyConcept) && (
+            <div className="feedback-context-card">
+              {q.lectureReference && (
+                <div className="context-item">
+                  <span className="context-item-label">📌 Reference:</span>
+                  <span className="context-item-val">{q.lectureReference}</span>
+                </div>
+              )}
+              {q.keyConcept && (
+                <div className="context-item">
+                  <span className="context-item-label">💡 Key Takeaway:</span>
+                  <span className="context-item-val">{q.keyConcept}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

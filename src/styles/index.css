@@ -645,7 +645,62 @@ body {
   color: #fff;
   box-shadow: 0 0 12px rgba(251, 113, 133, 0.3);
 }
-.option-text { flex: 1; }
+.option-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  text-align: left;
+}
+.option-text {
+  flex: 1;
+  line-height: 1.5;
+}
+.option-context {
+  margin-top: 4px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.context-correct {
+  background: var(--color-success-bg);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.context-correct .context-badge {
+  color: var(--color-success);
+}
+.context-correct .context-desc {
+  color: var(--color-text);
+}
+.context-distractor {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+.context-distractor .context-badge {
+  color: var(--color-error);
+}
+.context-distractor .context-desc {
+  color: var(--color-text-2);
+}
+.context-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.context-desc {
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
 
 /* ===== Feedback ===== */
 .feedback {
@@ -678,6 +733,36 @@ body {
   font-size: 0.88rem;
   line-height: 1.7;
   color: var(--color-text-2);
+}
+
+.feedback-context-card,
+.review-context-card {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.context-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+.context-item-label {
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+}
+.context-item-val {
+  color: var(--color-text-2);
+  flex: 1;
 }
 
 /* ===== Quiz Nav ===== */

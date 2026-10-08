@@ -10,7 +10,15 @@
     },
     "answer": "C",
     "explanation": "An exhaustive sliding window on a $640 \\times 640$ image across 5 scales and 3 aspect ratios generates over 50,000 crops. Running each crop through a modern deep CNN requires prohibitive computation, causing unacceptably high latency and extreme false-positive background classifications.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Sliding Window vs Region Proposals",
+    "keyConcept": "Exhaustive sliding windows cause an exponential explosion of forward passes.",
+    "optionContext": {
+      "A": "Incorrect. Test-time inference uses only forward passes; backpropagation is never used during test-time inference.",
+      "B": "Incorrect distractor. AlexNet forward passes take ~45s per image across 2,000 crops.",
+      "C": "Correct. This precisely matches the lecture slides: Evaluating thousands of combinations of spatial locations, scales, and aspect ratios requires an infeasible number of deep CNN forward passes ($O(W \\cdot H \\cdot S \\cdot A \\cdot C_{\\text{CNN}})$)",
+      "D": "Incorrect distractor. AlexNet forward passes take ~45s per image across 2,000 crops."
+    }
   },
   {
     "num": 2,
@@ -23,7 +31,15 @@
     },
     "answer": "B",
     "explanation": "Selective Search is a greedy hierarchical grouping algorithm that uses four class-agnostic similarity metrics: Color similarity (histogram intersection across 25 bins/channel), Texture similarity (fast gradient histograms across 8 orientations), Size similarity (merging small regions early to prevent giant segments from swallowing everything), and Shape compatibility/fill (measuring how well two regions fit into each other's bounding box).",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 8: Selective Search Hierarchical Grouping",
+    "keyConcept": "Selective Search uses 4 diverse metrics (color, texture, size, shape compatibility) to group pixels.",
+    "optionContext": {
+      "A": "Incorrect. Selective Search does not use Euclidean distance or cosine similarity in feature space.",
+      "B": "Correct. This precisely matches the lecture slides: Color histogram intersection, texture gradient histograms, size similarity (merging small regions early), and shape compatibility (fill)",
+      "C": "Incorrect. Selective Search does not use optical flow or stereo disparity.",
+      "D": "Incorrect. Superpixels have irregular pixel boundaries and no initial bounding box IoU."
+    }
   },
   {
     "num": 3,
@@ -36,7 +52,15 @@
     },
     "answer": "D",
     "explanation": "Selective Search extracts $\\sim 2,000$ candidate region proposals per image. R-CNN warped each proposal to $227 \\times 227$ and forwarded each through AlexNet individually. Running 2,000 forward passes per image required $\\sim 45$ seconds on GPU, while proposal generation took $\\sim 2$ seconds on CPU.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: R-CNN 4-Stage Pipeline & Bottlenecks",
+    "keyConcept": "2,000 independent AlexNet passes on crops accounted for ~95% of R-CNN latency.",
+    "optionContext": {
+      "A": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: R-CNN 4-Stage Pipeline & Bottlenecks.",
+      "C": "Incorrect. Selective Search is a CPU algorithm (taking ~2 seconds per image), not a GPU bottleneck.",
+      "D": "Correct. This precisely matches the lecture slides: Executing $\\sim 2,000$ independent AlexNet forward passes on warped candidate region crops"
+    }
   },
   {
     "num": 4,
@@ -49,7 +73,15 @@
     },
     "answer": "B",
     "explanation": "R-CNN required 4 separate stages: pre-training on ImageNet, fine-tuning AlexNet with Softmax, saving 4,096-d feature vectors to disk, training independent class SVMs using hard negative mining, and fitting linear ridge regressors. Because SVMs and regression heads were trained separately after feature caching, gradients could not flow back to update the convolutional layers.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 8: Decoupled Multi-Stage Training in R-CNN",
+    "keyConcept": "Decoupled stages and feature caching prevented end-to-end backpropagation in R-CNN.",
+    "optionContext": {
+      "A": "Incorrect. Cross-entropy was standard for neural network classification long before R-CNN.",
+      "B": "Correct. This precisely matches the lecture slides: The pipeline had decoupled training stages: CNN feature extraction, SVM classification, and bounding box ridge regression were trained independently on cached features",
+      "C": "Incorrect. Selective Search bounding box coordinates are always positive within image boundaries.",
+      "D": "Incorrect distractor. AlexNet forward passes take ~45s per image across 2,000 crops."
+    }
   },
   {
     "num": 5,
@@ -62,7 +94,15 @@
     },
     "answer": "B",
     "explanation": "SPP-Net eliminated R-CNN's 2,000 redundant CNN forward passes by executing the convolutional feature extractor exactly once over the full-resolution image. Proposals were mapped onto the shared feature map, and a Spatial Pyramid Pooling layer extracted fixed-length vectors without warping or cropping the input.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: SPP-Net Shared Feature Maps",
+    "keyConcept": "SPP-Net runs CNN once per full image and extracts fixed-bin vectors without warping.",
+    "optionContext": {
+      "A": "Incorrect. SPP-Net still relied on Selective Search proposals; it only replaced redundant feature extraction.",
+      "B": "Correct. This precisely matches the lecture slides: Computing the convolutional feature map on the full image only ONCE, then extracting fixed-length representations for arbitrary-sized proposals via Spatial Pyramid Pooling",
+      "C": "Incorrect. Anchor boxes were introduced later by Faster R-CNN RPN, not SPP-Net.",
+      "D": "Incorrect. SPP-Net does not use recurrent LSTM cells."
+    }
   },
   {
     "num": 6,
@@ -75,7 +115,15 @@
     },
     "answer": "C",
     "explanation": "The total number of spatial bins is $(4 \\times 4) + (2 \\times 2) + (1 \\times 1) = 16 + 4 + 1 = 21$. Each spatial bin outputs $C=256$ pooled values (one per channel). The concatenated feature vector length is therefore $21 \\times 256 = 5,376$, independent of the proposal's original dimensions.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 8: Spatial Pyramid Pooling Bin Geometry",
+    "keyConcept": "Spatial pyramid pooling bins (16+4+1=21) produce a fixed vector of length 21·C.",
+    "optionContext": {
+      "A": "Incorrect calculation. Bins: (16 + 4 + 1) = 21. Multiplied by 256 channels = 5,376 dimensions.",
+      "B": "Incorrect calculation. Bins: (16 + 4 + 1) = 21. Multiplied by 256 channels = 5,376 dimensions.",
+      "C": "Correct. This precisely matches the lecture slides: $21 \\times 256 = 5,376$",
+      "D": "Incorrect calculation. Bins: (16 + 4 + 1) = 21. Multiplied by 256 channels = 5,376 dimensions."
+    }
   },
   {
     "num": 7,
@@ -88,7 +136,15 @@
     },
     "answer": "B",
     "explanation": "In SPP-Net, training examples for the FC layers came from different images. Backpropagating through the SPP layer when each RoI had an enormous and distinct receptive field spanning different images was computationally intractable with GPU mini-batch SGD, so He et al. only fine-tuned the FC layers.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 8: Backpropagation Limits through SPP",
+    "keyConcept": "Disparate RoI receptive fields across images made backprop through SPP intractable with GPU SGD.",
+    "optionContext": {
+      "A": "Incorrect. Max pooling is piecewise differentiable; the issue was GPU mini-batch memory and receptive field distribution.",
+      "B": "Correct. This precisely matches the lecture slides: Each training sample came from a different image with different receptive fields, making backpropagation through arbitrary pyramid bins across images computationally inefficient for mini-batch SGD",
+      "C": "Incorrect humorous distractor. The barrier was the computational cost of disparate RoI receptive fields with mini-batch SGD.",
+      "D": "Incorrect humorous distractor. The barrier was the computational cost of disparate RoI receptive fields with mini-batch SGD."
+    }
   },
   {
     "num": 8,
@@ -101,7 +157,15 @@
     },
     "answer": "C",
     "explanation": "Fast R-CNN maps region proposals onto the shared convolutional feature map, pools each proposal to a fixed $7 \\times 7 \\times C$ tensor using RoI Pooling, and feeds it into FC layers that branch into sibling heads: a Softmax classifier over $K+1$ classes and a bounding box regressor predicting 4 coordinate offsets per class, trained end-to-end via Multi-Task Loss.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Fast R-CNN RoIPool & Sibling Heads",
+    "keyConcept": "Fast R-CNN unifies RoIPool with sibling classification and regression heads via multi-task loss.",
+    "optionContext": {
+      "A": "Incorrect. Fast R-CNN uses a deep convolutional backbone followed by RoIPool and sibling FC heads.",
+      "B": "Incorrect. K-means anchor clustering was introduced in YOLOv2, not Fast R-CNN.",
+      "C": "Correct. This precisely matches the lecture slides: By using RoI Pooling on shared feature maps followed by sibling output heads (Softmax classifier and Bounding Box Regressor) trained jointly with Multi-Task Loss",
+      "D": "Incorrect. Anchors operate on convolutional feature maps, not raw input."
+    }
   },
   {
     "num": 9,
@@ -114,7 +178,15 @@
     },
     "answer": "D",
     "explanation": "The Fast R-CNN loss combines classification log loss $L_{\\text{cls}}(p, u) = -\\log p_u$ and bounding box regression loss $L_{\\text{loc}}(t^u, v) = \\sum_{i \\in \\{x,y,w,h\\}} \\text{smooth}_{L_1}(t_i^u - v_i)$. The Iverson bracket $[u \\ge 1]$ activates the localization loss only for positive foreground objects (class $u \\ge 1$), ignoring background ($u=0$).",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Fast R-CNN Multi-Task Loss Formula",
+    "keyConcept": "Multi-task loss optimizes classification and Smooth L1 regression simultaneously with Iverson bracket [u >= 1].",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: Fast R-CNN Multi-Task Loss Formula.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: Fast R-CNN Multi-Task Loss Formula.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: Fast R-CNN Multi-Task Loss Formula.",
+      "D": "Correct. This precisely matches the lecture slides: $L(p, u, t^u, v) = L_{\\text{cls}}(p, u) + \\lambda [u \\ge 1] L_{\\text{loc}}(t^u, v)$ where $[u \\ge 1]$ is 1 for foreground objects and 0 for background"
+    }
   },
   {
     "num": 10,
@@ -127,7 +199,15 @@
     },
     "answer": "C",
     "explanation": "Smooth $L_1(x) = 0.5x^2$ for $|x| < 1$ and $|x| - 0.5$ for $|x| \\ge 1$. For large errors ($|x| \\ge 1$), its gradient is constant ($\\pm 1$), preventing exploding gradients from poor initial proposals. Near zero ($|x| < 1$), it behaves quadratically, ensuring smooth convergence without oscillating around zero.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Smooth L1 vs L2 Loss for Bounding Boxes",
+    "keyConcept": "Smooth L1 has bounded +/-1 gradients for large errors, preventing training divergence from outliers.",
+    "optionContext": {
+      "A": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "B": "Incorrect. Smooth L1 is a convex piecewise function, not strictly concave.",
+      "C": "Correct. This precisely matches the lecture slides: $L_2$ loss has linear gradients ($2x$) that produce massive gradient spikes for large outlier errors, whereas Smooth $L_1$ has bounded constant gradients ($\\pm 1$) for $|x| \\ge 1$",
+      "D": "Incorrect. Smooth L1 produces zero loss only when predicted offsets exactly equal target offsets."
+    }
   },
   {
     "num": 11,
@@ -140,7 +220,15 @@
     },
     "answer": "B",
     "explanation": "RoI Pooling applies two integer quantization steps: first when mapping continuous input image RoI coordinates to the feature map (e.g., dividing by stride 16 and rounding), and second when dividing the feature RoI into a $7 \\times 7$ grid of bins. These rounding steps cause up to 1 feature pixel of error, which translates to 16–32 pixels of misalignment on the input image.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 8: RoI Pooling Quantization Misalignment",
+    "keyConcept": "Quantization rounding in RoIPool introduces 16-32 pixels of spatial misalignment on input.",
+    "optionContext": {
+      "A": "Incorrect. CNN backbones routinely process 3-channel RGB image crops without losing color channels.",
+      "B": "Correct. This precisely matches the lecture slides: Two separate rounding operations: flooring the RoI coordinates onto the feature map ($x' = \\lfloor x/16 \\rfloor$) and flooring the spatial bin boundaries ($\\lfloor w'/7 \\rfloor$)",
+      "C": "Incorrect. Zero padding preserves feature map spatial sizes and does not cause RoIPool quantization error.",
+      "D": "Incorrect. Spatial quantization refers to coordinate rounding (stride and sub-bin divisions), not weight precision."
+    }
   },
   {
     "num": 12,
@@ -153,7 +241,15 @@
     },
     "answer": "C",
     "explanation": "RoIAlign avoids all coordinate rounding. RoI boundaries and sub-bin partitions remain exact floating-point numbers. Inside each bin, 4 continuous regular sampling points are evaluated via bilinear interpolation from neighboring feature map pixels, and then aggregated (via max or average pooling).",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: RoIAlign Bilinear Interpolation",
+    "keyConcept": "RoIAlign preserves continuous floats and samples 4 points per bin via bilinear interpolation.",
+    "optionContext": {
+      "A": "Incorrect. RoIAlign uses bilinear interpolation and pooling, not learned convolution weights.",
+      "B": "Incorrect. Deep CNN backbones require downsampling strides (e.g. 16) for receptive field size.",
+      "C": "Correct. This precisely matches the lecture slides: By preserving exact floating-point coordinates and using bilinear interpolation to sample features at 4 continuous points inside each bin without any coordinate rounding",
+      "D": "Incorrect. RoIAlign preserves exact continuous floating-point coordinates and avoids rounding."
+    }
   },
   {
     "num": 13,
@@ -166,7 +262,15 @@
     },
     "answer": "D",
     "explanation": "The RPN is a fully convolutional network that shares the backbone feature map with Fast R-CNN. It applies a $3 \\times 3$ convolution followed by two sibling $1 \\times 1$ convolutions: one producing $2k$ objectness scores (foreground vs. background) and one producing $4k$ coordinate offsets for $k$ anchor boxes at each spatial location.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Region Proposal Network (RPN) Architecture",
+    "keyConcept": "RPN slides a 3x3 conv with sibling 1x1 convs to predict 2k scores and 4k box offsets.",
+    "optionContext": {
+      "A": "Incorrect. RPN is a fully convolutional network, not an autoregressive sequence model.",
+      "B": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "C": "Incorrect. RPN uses small convolutional filters (3x3 and 1x1) over the feature map.",
+      "D": "Correct. This precisely matches the lecture slides: A small fully convolutional network sliding over the shared convolutional feature map that simultaneously predicts anchor objectness scores and bounding box regression offsets"
+    }
   },
   {
     "num": 14,
@@ -179,7 +283,15 @@
     },
     "answer": "A",
     "explanation": "At each sliding window location, Faster R-CNN defines $k = 3 \\times 3 = 9$ anchor boxes: 3 scales (box areas of $128^2, 256^2, 512^2$ pixels) and 3 aspect ratios ($1:1, 1:2, 2:1$).",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Default RPN Anchor Scales and Ratios",
+    "keyConcept": "Faster R-CNN defines 9 default anchors (3 scales x 3 aspect ratios).",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: 3 scales ($128^2, 256^2, 512^2$ pixels) combined with 3 aspect ratios ($1:1, 1:2, 2:1$)",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Default RPN Anchor Scales and Ratios.",
+      "C": "Incorrect. Faster R-CNN anchors were handcrafted; YOLOv2 later used k-means clustering.",
+      "D": "Incorrect. Standard 2D object detection anchors are axis-aligned and do not use rotation angles."
+    }
   },
   {
     "num": 15,
@@ -192,7 +304,15 @@
     },
     "answer": "A",
     "explanation": "The feature map dimensions are $W' = 800 / 16 = 50$ and $H' = \\lceil 600 / 16 \\rceil = 38$. Total grid locations $= 50 \\times 38 = 1,900$. With $k=9$ anchors per location, the total number of candidate anchors generated is $1,900 \\times 9 = 17,100$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Anchor Grid Calculations across Strides",
+    "keyConcept": "Downsampling by stride 16 on 800x600 yields 1,900 locations x 9 = 17,100 anchors.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: $50 \\times 38 \\times 9 = 17,100$ anchors",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Anchor Grid Calculations across Strides.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Anchor Grid Calculations across Strides.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Anchor Grid Calculations across Strides."
+    }
   },
   {
     "num": 16,
@@ -205,7 +325,15 @@
     },
     "answer": "B",
     "explanation": "RPN assigns positive labels under two conditions: (1) the anchor(s) with the highest IoU overlap with a ground-truth box (ensuring every GT box has at least one matching anchor), or (2) any anchor with $\\text{IoU} \\ge 0.7$ with any ground-truth box. Anchors with $\\text{IoU} < 0.3$ are negative; those between $0.3$ and $0.7$ are ignored.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 8: RPN Positive and Negative Assignment Rules",
+    "keyConcept": "Anchors with highest IoU or IoU >= 0.7 are positive; IoU < 0.3 are negative; 0.3-0.7 ignored.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 8: RPN Positive and Negative Assignment Rules.",
+      "B": "Correct. This precisely matches the lecture slides: The anchor(s) with the highest IoU overlap with a ground-truth box, OR any anchor with $\\text{IoU} \\ge 0.7$ with any ground-truth box",
+      "C": "Incorrect. Center-in-box is used in FCOS/YOLOv1, whereas Faster R-CNN RPN uses IoU overlap thresholds.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 8: RPN Positive and Negative Assignment Rules."
+    }
   },
   {
     "num": 17,
@@ -218,7 +346,15 @@
     },
     "answer": "A",
     "explanation": "Because background anchors vastly outnumber foreground anchors ($>99\\%$ background), using all anchors would drown out positive gradients. RPN samples a mini-batch of 256 anchors from a single image targeting a 1:1 ratio (up to 128 positives, padded with negatives if fewer positives exist).",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 8: RPN Mini-Batch 1:1 Sampling Strategy",
+    "keyConcept": "Mini-batch samples 256 anchors at 1:1 ratio to prevent background anchors from drowning gradients.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Sampled from a single image with up to 128 positive anchors and the remainder padded with negative background anchors (1:1 ratio)",
+      "B": "Incorrect. RPN samples mini-batches from a single image (or 2 images) to maximize shared conv efficiency.",
+      "C": "Incorrect. Discarding negatives would cause the network to predict foreground everywhere; negative anchors are vital.",
+      "D": "Incorrect. Anchors are sampled directly from grid locations, not averaged together."
+    }
   },
   {
     "num": 18,
@@ -231,7 +367,15 @@
     },
     "answer": "A",
     "explanation": "Center coordinates $(x, y)$ are scale-normalized by anchor dimensions: $t_x = (x - x_a)/w_a$, $t_y = (y - y_a)/h_a$. Dimensions $(w, h)$ are parameterized in log-space: $t_w = \\ln(w/w_a)$, $t_h = \\ln(h/h_a)$, ensuring that predicted dimensions $w = w_a e^{t_w}$ are strictly positive.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Log-Space Bounding Box Parameterization",
+    "keyConcept": "Center offsets are scale-normalized by anchor dimensions; width/height use log-space offsets.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: $t_x = \\frac{x - x_a}{w_a}, \\quad t_y = \\frac{y - y_a}{h_a}, \\quad t_w = \\ln\\left(\\frac{w}{w_a}\\right), \\quad t_h = \\ln\\left(\\frac{h}{h_a}\\right)$",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Log-Space Bounding Box Parameterization.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Log-Space Bounding Box Parameterization.",
+      "D": "Incorrect. Faster R-CNN uses unconstrained linear regression targets; sigmoid was introduced in YOLOv2."
+    }
   },
   {
     "num": 19,
@@ -244,7 +388,15 @@
     },
     "answer": "A",
     "explanation": "During inference, RPN evaluates all $\\sim 17,000$ anchors, takes the top 6,000 scored anchors, clips them to image boundaries, applies NMS (IoU threshold 0.7), and keeps the top $\\sim 300$ candidate RoIs to pass to Fast R-CNN classification and refinement.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 8: Faster R-CNN Inference Proposal Pruning",
+    "keyConcept": "RPN filters 17,100 candidate anchors down to ~300 high-quality RoIs for Stage 2.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: $\\sim 300$",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Faster R-CNN Inference Proposal Pruning.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Faster R-CNN Inference Proposal Pruning.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: Faster R-CNN Inference Proposal Pruning."
+    }
   },
   {
     "num": 20,
@@ -257,7 +409,15 @@
     },
     "answer": "B",
     "explanation": "4-step alternating training trains RPN, uses proposals to train Fast R-CNN, fixes shared conv layers to fine-tune RPN, and fine-tunes Fast R-CNN FC layers. Approximate end-to-end training unifies both networks in a single forward/backward pass, ignoring derivatives with respect to RoI box coordinates produced by RPN, running much faster with virtually identical mAP.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 8: 4-Step Alternating vs End-to-End Training",
+    "keyConcept": "Approximate end-to-end training ignores RoI coordinate gradients but trains significantly faster.",
+    "optionContext": {
+      "A": "Incorrect. Approximate end-to-end training retains RPN and trains it jointly with Fast R-CNN.",
+      "B": "Correct. This precisely matches the lecture slides: Alternating training updates RPN and Fast R-CNN sequentially with fixed shared weights; approximate end-to-end trains both simultaneously, ignoring gradients with respect to RoI proposal coordinates",
+      "C": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "D": "Incorrect. 4-step training shares the convolutional backbone across alternating phases."
+    }
   },
   {
     "num": 21,
@@ -270,7 +430,15 @@
     },
     "answer": "C",
     "explanation": "Two-stage detectors cannot run in a single static computation graph. Stage 2 must wait for Stage 1's RPN to propose candidates and run NMS. Then up to 300 crops must be gathered from feature memory and evaluated through FC layers. This dynamic, sequential execution prevents continuous GPU pipeline saturation.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 8: Two-Stage Inference Latency Bottlenecks",
+    "keyConcept": "Dynamic proposal count and sequential RoI dependency prevent continuous GPU saturation.",
+    "optionContext": {
+      "A": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "B": "Incorrect. Two-stage detectors run on NVIDIA GPUs but suffer from branching and memory latency.",
+      "C": "Correct. This precisely matches the lecture slides: Stage 2 has a sequential dependency on Stage 1 (must wait for RPN proposals and NMS) and processes a variable number of RoIs (up to 300) through fully connected layers, creating irregular memory access and GPU stalls",
+      "D": "Incorrect. 2D object detection operates on individual frames without optical flow."
+    }
   },
   {
     "num": 22,
@@ -283,7 +451,15 @@
     },
     "answer": "B",
     "explanation": "Two-stage detectors (Faster R-CNN) solve detection via a 'propose then classify' hypothesis-testing approach, prioritizing high localization precision and small-object recall. One-stage detectors (YOLO, SSD) reframe detection as a single dense regression/classification problem over a fixed grid, prioritizing real-time inference speed.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Two-Stage vs One-Stage Paradigm Taxonomy",
+    "keyConcept": "Two-stage proposes then classifies (high recall); one-stage predicts densely in one pass (high FPS).",
+    "optionContext": {
+      "A": "Incorrect. RoIPool operates on multi-channel convolutional feature maps.",
+      "B": "Correct. This precisely matches the lecture slides: Two-stage detectors first hypothesize candidate regions (sparse proposals) then classify/refine; One-stage detectors predict bounding boxes and classes simultaneously across dense spatial grid locations in a single pass",
+      "C": "Incorrect. Both two-stage and one-stage detectors use deep convolutional networks.",
+      "D": "Incorrect. Both paradigms require Non-Maximum Suppression to remove redundant overlapping candidate boxes."
+    }
   },
   {
     "num": 23,
@@ -296,7 +472,15 @@
     },
     "answer": "A",
     "explanation": "Lecture 8 breaks modern one-stage detection into 6 modular stages: (1) Backbone (feature representation learning), (2) Neck (multi-scale feature fusion, e.g., FPN/PANet), (3) Head (dense predictions), (4) Target Assignment (matching ground-truth objects to grid/anchors), (5) Loss Functions (multi-task optimization), and (6) Post-Processing (NMS).",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 8: One-Stage Detector Grammar (6 Stages)",
+    "keyConcept": "Modern 1-stage grammar: Backbone, Neck, Head, Target Assignment, Loss Functions, Post-Processing.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Backbone, Neck, Head, Target Assignment, Loss Functions, and Post-Processing (NMS)",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 8: One-Stage Detector Grammar (6 Stages).",
+      "C": "Incorrect. This describes full autonomous vehicle sensor hardware, not the internal CNN detector grammar.",
+      "D": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck."
+    }
   },
   {
     "num": 24,
@@ -309,7 +493,15 @@
     },
     "answer": "A",
     "explanation": "Darknet-53 is a 53-layer convolutional backbone featuring repeated residual blocks (each with a $1 \\times 1$ conv followed by a $3 \\times 3$ conv and skip connection). It downsamples the image across 5 stages with strides 2, 4, 8, 16, and 32, achieving ResNet-101-level accuracy with much higher GPU throughput.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 8: Darknet-53 Residual Backbone Design",
+    "keyConcept": "Darknet-53 uses repeated 1x1 and 3x3 convolutions with ResNet skip connections across 5 stages.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: 53 convolutional layers organized into 5 resolution stages using successive $3 \\times 3$ and $1 \\times 1$ convolutions with ResNet-style residual skip connections",
+      "B": "Incorrect. Darknet-53 is a pure convolutional network, not a Vision Transformer.",
+      "C": "Incorrect. Darknet-53 is a deep fully convolutional residual network.",
+      "D": "Incorrect. Darknet-53 features 53 convolutional layers with residual skip connections, not 34 max-pools."
+    }
   },
   {
     "num": 25,
@@ -322,7 +514,15 @@
     },
     "answer": "A",
     "explanation": "In deep CNNs, high-level features have strong semantic information but poor localization resolution, whereas shallow features have high spatial detail but weak semantics. FPN upsamples deep semantic features by $2\\times$ and concatenates them with shallow features, giving high-resolution prediction heads the semantic richness needed to detect small objects.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: FPN Top-Down Semantic Feature Fusion",
+    "keyConcept": "FPN upsamples deep semantic features to enrich high-resolution shallow layers for small objects.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Deep feature maps (stride 32) have rich semantic context but coarse spatial resolution, while shallow maps (stride 8) retain fine spatial details; top-down fusion and concatenation equip high-resolution layers with deep semantics to detect small objects",
+      "B": "Incorrect. FPN feature maps preserve anchor flexibility across arbitrary rectangular aspect ratios.",
+      "C": "Incorrect. FPN is designed for multi-scale semantic feature fusion, not monocular depth estimation.",
+      "D": "Incorrect. FPN upsamples deep features and concatenates them with shallow features."
+    }
   },
   {
     "num": 26,
@@ -335,7 +535,15 @@
     },
     "answer": "B",
     "explanation": "YOLOv3 predicts at 3 scales: P3 (stride 8, finest grid, e.g. $52 \\times 52$) detects small objects; P4 (stride 16, intermediate grid, e.g. $26 \\times 26$) detects medium objects; P5 (stride 32, coarsest grid with largest receptive field, e.g. $13 \\times 13$) detects large objects.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: Multi-Scale Detection Strides (P3, P4, P5)",
+    "keyConcept": "P3 (stride 8) detects small objects; P4 (stride 16) medium; P5 (stride 32) large objects.",
+    "optionContext": {
+      "A": "Incorrect. YOLOv3 uses strides 8 (P3), 16 (P4), and 32 (P5).",
+      "B": "Correct. This precisely matches the lecture slides: P3 (stride 8, small objects), P4 (stride 16, medium objects), P5 (stride 32, large objects)",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 8: Multi-Scale Detection Strides (P3, P4, P5).",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 8: Multi-Scale Detection Strides (P3, P4, P5)."
+    }
   },
   {
     "num": 27,
@@ -348,7 +556,15 @@
     },
     "answer": "D",
     "explanation": "Each anchor predicts 4 coordinate offsets $(t_x, t_y, t_w, t_h)$, 1 objectness confidence score, and $C=80$ class conditional probabilities: $(4 + 1 + 80) = 85$ values per anchor. With $A=3$ anchors per grid cell, the total channel depth is $3 \\times 85 = 255$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: YOLOv3 Head Tensor Channel Math",
+    "keyConcept": "Each cell outputs 3 anchors x (4 box + 1 obj + C classes) = 255 channels on COCO.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: YOLOv3 Head Tensor Channel Math.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: YOLOv3 Head Tensor Channel Math.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: YOLOv3 Head Tensor Channel Math.",
+      "D": "Correct. This precisely matches the lecture slides: $3 \\times (4 + 1 + 80) = 255$ channels"
+    }
   },
   {
     "num": 28,
@@ -361,7 +577,15 @@
     },
     "answer": "C",
     "explanation": "Dividing $416$ by strides 8, 16, and 32 yields spatial grids of $52 \\times 52$, $26 \\times 26$, and $13 \\times 13$. Each spatial grid outputs $3 \\times 85 = 255$ channels. The three output tensors are $52 \\times 52 \\times 255$, $26 \\times 26 \\times 255$, and $13 \\times 13 \\times 255$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: YOLOv3 Output Tensor Spatial Shapes",
+    "keyConcept": "416x416 input produces 52x52x255 (P3), 26x26x255 (P4), and 13x13x255 (P5) output tensors.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 8: YOLOv3 Output Tensor Spatial Shapes.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 8: YOLOv3 Output Tensor Spatial Shapes.",
+      "C": "Correct. This precisely matches the lecture slides: $52 \\times 52 \\times 255$, $26 \\times 26 \\times 255$, and $13 \\times 13 \\times 255$",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 8: YOLOv3 Output Tensor Spatial Shapes."
+    }
   },
   {
     "num": 29,
@@ -374,7 +598,15 @@
     },
     "answer": "D",
     "explanation": "The 85-dimensional vector consists of: 4 box offset parameters $(t_x, t_y, t_w, t_h)$ at indices 0–3, 1 objectness confidence score logit $p_{\\text{obj}}$ at index 4, and 80 class probability logits $(p_1, \\dots, p_{80})$ at indices 5–84.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 8: 85-Dimensional Anchor Vector Breakdown",
+    "keyConcept": "Each 85-d vector contains 4 box offsets, 1 objectness logit, and 80 class logits.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: 85-Dimensional Anchor Vector Breakdown.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: 85-Dimensional Anchor Vector Breakdown.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 8: 85-Dimensional Anchor Vector Breakdown.",
+      "D": "Correct. This precisely matches the lecture slides: Indices 0–3: coordinate offsets $(t_x, t_y, t_w, t_h)$; Index 4: objectness confidence logit; Indices 5–84: class probability logits for the 80 COCO categories"
+    }
   },
   {
     "num": 30,
@@ -387,7 +619,15 @@
     },
     "answer": "B",
     "explanation": "Softmax assumes every box belongs to exactly one mutually exclusive class. In real-world autonomous perception and datasets like Open Images, labels can be hierarchical (e.g., 'Pedestrian' and 'Person') or multi-label. Independent BCE classifiers evaluate each class probability independently.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 8: Binary Cross-Entropy vs Softmax in Detection",
+    "keyConcept": "Independent BCE allows multi-label detection without the mutual exclusivity enforced by Softmax.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 8: Binary Cross-Entropy vs Softmax in Detection.",
+      "B": "Correct. This precisely matches the lecture slides: Softmax enforces mutual exclusivity (classes sum to 1.0), whereas BCE allows multi-label classification for hierarchical or overlapping concepts (e.g., 'Woman' and 'Person')",
+      "C": "Incorrect. Both Softmax and BCE use float32 (or FP16); the issue is multi-label class hierarchy.",
+      "D": "Incorrect. Softmax gradients do not inherently vanish; the limitation is mutually exclusive class probability."
+    }
   },
   {
     "num": 31,
@@ -400,7 +640,15 @@
     },
     "answer": "A",
     "explanation": "YOLOv1 determines responsibility strictly based on the center of the object: if an object's center falls into grid cell $(i, j)$, that specific cell is responsible for detecting the object, regardless of how large the object is or how many other grid cells it covers.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: YOLOv1 Center Grid Cell Responsibility",
+    "keyConcept": "YOLOv1 strictly assigns ground truth to the single cell containing the object center coordinates.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Strictly to the single grid cell that contains the center coordinates $(x_{\\text{center}}, y_{\\text{center}})$ of the ground-truth box",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv1 Center Grid Cell Responsibility.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv1 Center Grid Cell Responsibility.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv1 Center Grid Cell Responsibility."
+    }
   },
   {
     "num": 32,
@@ -413,7 +661,15 @@
     },
     "answer": "D",
     "explanation": "In YOLOv1, each grid cell predicts $B$ bounding boxes, where each box has 5 parameters $(x, y, w, h, \\text{confidence})$, plus a single shared vector of $C=20$ conditional class probabilities. Thus, channels per cell $= B \\cdot 5 + C = 2 \\times 5 + 20 = 30$. Total values $= 7 \\times 7 \\times 30 = 1,470$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: YOLOv1 Output Tensor Dimensions (SxSx30)",
+    "keyConcept": "YOLOv1 predicts 7x7 x (2x5 + 20) = 1,470 values per image on PASCAL VOC.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv1 Output Tensor Dimensions (SxSx30).",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv1 Output Tensor Dimensions (SxSx30).",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv1 Output Tensor Dimensions (SxSx30).",
+      "D": "Correct. This precisely matches the lecture slides: $7 \\times 7 \\times (2 \\times 5 + 20) = 7 \\times 7 \\times 30 = 1,470$ values"
+    }
   },
   {
     "num": 33,
@@ -426,7 +682,15 @@
     },
     "answer": "D",
     "explanation": "Although each cell predicts $B=2$ boxes, it only predicts ONE set of class probabilities, and spatial assignment permits only one ground truth per cell. If multiple objects have centers in the same $1/7 \\times 1/7$ grid cell, the cell can only detect one, missing the others.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: YOLOv1 Limitations on Grouped Small Objects",
+    "keyConcept": "A single class distribution per grid cell prevents detecting multiple grouped objects in YOLOv1.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv1 Limitations on Grouped Small Objects.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv1 Limitations on Grouped Small Objects.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv1 Limitations on Grouped Small Objects.",
+      "D": "Correct. This precisely matches the lecture slides: Each grid cell only predicts ONE set of class probabilities, and at most one object center can be assigned to a single cell; if multiple small objects fall into the same cell, only one can be detected"
+    }
   },
   {
     "num": 34,
@@ -439,7 +703,15 @@
     },
     "answer": "D",
     "explanation": "Instead of choosing handcrafted anchor sizes (like Faster R-CNN), YOLOv2 runs k-means clustering on ground-truth boxes. To make the clustering independent of box size (so larger boxes don't produce larger Euclidean errors), it uses $d(\\text{box}, \\text{centroid}) = 1 - \\text{IoU}(\\text{box}, \\text{centroid})$. $k=5$ anchors gave an optimal recall vs. complexity trade-off.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: YOLOv2 K-Means Anchor Clustering (1 - IoU)",
+    "keyConcept": "YOLOv2 runs k-means using d = 1 - IoU to make anchor templates scale-invariant.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv2 K-Means Anchor Clustering (1 - IoU).",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLOv2 K-Means Anchor Clustering (1 - IoU).",
+      "C": "Incorrect. Faster R-CNN anchors were handcrafted; YOLOv2 later used k-means clustering.",
+      "D": "Correct. This precisely matches the lecture slides: Via k-means clustering on the training dataset bounding boxes using distance metric $d(\\text{box}, \\text{centroid}) = 1 - \\text{IoU}(\\text{box}, \\text{centroid})$"
+    }
   },
   {
     "num": 35,
@@ -452,7 +724,15 @@
     },
     "answer": "C",
     "explanation": "Unconstrained anchor regression (as in Faster R-CNN) allows predicted box centers to shift anywhere in the image, causing training instability. YOLOv2 constrains box centers to the grid cell by passing offsets through a sigmoid: $b_x = \\sigma(t_x) + c_x$. Since $\\sigma(t) \\in (0, 1)$, the predicted center cannot leave cell $(c_x, c_y)$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: YOLOv2 Direct Location Prediction Bounding",
+    "keyConcept": "Direct location prediction constrains center coordinates to cell boundaries via sigmoid activation.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: YOLOv2 Direct Location Prediction Bounding.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: YOLOv2 Direct Location Prediction Bounding.",
+      "C": "Correct. This precisely matches the lecture slides: Applying a sigmoid activation $\\sigma(t)$ to center offsets so that predicted center $(b_x, b_y) = (\\sigma(t_x) + c_x, \\sigma(t_y) + c_y)$ is constrained strictly within the boundaries of grid cell $(c_x, c_y)$",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: YOLOv2 Direct Location Prediction Bounding."
+    }
   },
   {
     "num": 36,
@@ -465,7 +745,15 @@
     },
     "answer": "A",
     "explanation": "To detect small objects, YOLOv2 brings fine-grained features from an earlier $26 \\times 26 \\times 512$ layer. The passthrough layer turns spatial resolution into depth by interleaving $2 \\times 2$ neighbor pixels into 4 channels, creating a $13 \\times 13 \\times 2048$ tensor that is concatenated with the standard $13 \\times 13 \\times 1024$ feature map.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: YOLOv2 Passthrough Reorganization Layer",
+    "keyConcept": "Passthrough layer stacks high-resolution 26x26x512 into 13x13x2048 to retain spatial detail.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: It takes a higher-resolution feature map ($26 \\times 26 \\times 512$) and stacks adjacent spatial pixels into channels to produce $13 \\times 13 \\times 2048$, concatenating it with the deep feature map to preserve fine-grained localization details",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv2 Passthrough Reorganization Layer.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv2 Passthrough Reorganization Layer.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv2 Passthrough Reorganization Layer."
+    }
   },
   {
     "num": 37,
@@ -478,7 +766,15 @@
     },
     "answer": "C",
     "explanation": "YOLOv3 predicts 3 anchors per cell across 3 scales: Scale 1 (P3, stride 8): $52 \\times 52 \\times 3 = 8,112$; Scale 2 (P4, stride 16): $26 \\times 26 \\times 3 = 2,028$; Scale 3 (P5, stride 32): $13 \\times 13 \\times 3 = 507$. Total $= 8,112 + 2,028 + 507 = 10,647$ candidate boxes.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: YOLOv3 Total Candidate Box Count Math",
+    "keyConcept": "YOLOv3 predicts 8,112 (P3) + 2,028 (P4) + 507 (P5) = 10,647 candidate boxes per 416x416 image.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: YOLOv3 Total Candidate Box Count Math.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: YOLOv3 Total Candidate Box Count Math.",
+      "C": "Correct. This precisely matches the lecture slides: $52^2 \\times 3 + 26^2 \\times 3 + 13^2 \\times 3 = 8,112 + 2,028 + 507 = 10,647$ boxes",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: YOLOv3 Total Candidate Box Count Math."
+    }
   },
   {
     "num": 38,
@@ -491,7 +787,15 @@
     },
     "answer": "A",
     "explanation": "YOLOv4 standardizes detector anatomy: Backbone = CSPDarknet53 (integrating Cross Stage Partial connections for efficiency); Neck = SPP block (expanding receptive field) + PANet (bidirectional feature fusion); Head = YOLOv3 anchor-based multi-scale dense prediction head.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: YOLOv4 Architecture Anatomy (CSP + PANet + Dense)",
+    "keyConcept": "YOLOv4 standardizes CSPDarknet53 backbone, SPP + PANet neck, and YOLOv3 multi-scale head.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Backbone: CSPDarknet53; Neck: SPP block + PANet (Path Aggregation Network); Head: YOLOv3 dense multi-scale anchor head",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv4 Architecture Anatomy (CSP + PANet + Dense).",
+      "C": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv4 Architecture Anatomy (CSP + PANet + Dense)."
+    }
   },
   {
     "num": 39,
@@ -504,7 +808,15 @@
     },
     "answer": "B",
     "explanation": "Bag of Freebies refers to techniques that change only the training pipeline (e.g., Mosaic augmentation, CutMix, CIoU loss, Label Smoothing, DropBlock). Because they are not executed during test-time inference, they boost accuracy for 'free' without slowing down runtime FPS.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: Bag of Freebies (BoF) Formal Definition",
+    "keyConcept": "Bag of Freebies improves accuracy through training techniques with zero inference latency penalty.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: Bag of Freebies (BoF) Formal Definition.",
+      "B": "Correct. This precisely matches the lecture slides: Training strategies, data augmentations, loss functions, and regularization methods that increase accuracy and robustness WITHOUT increasing inference latency at runtime",
+      "C": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: Bag of Freebies (BoF) Formal Definition."
+    }
   },
   {
     "num": 40,
@@ -517,7 +829,15 @@
     },
     "answer": "A",
     "explanation": "Bag of Specials refers to lightweight architectural enhancements (e.g., Mish activation, SPP block, PANet, DIoU-NMS) that introduce only a tiny increase in inference latency but significantly improve accuracy, gradient flow, and multi-scale receptive field capacity.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: Bag of Specials (BoS) Formal Definition",
+    "keyConcept": "Bag of Specials adds lightweight modules (Mish, SPP, PANet) that boost accuracy at minor latency cost.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Lightweight architectural modules, activations, and post-processing plugins that add a negligible increase to inference time while substantially boosting accuracy and receptive field",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Bag of Specials (BoS) Formal Definition.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Bag of Specials (BoS) Formal Definition.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Bag of Specials (BoS) Formal Definition."
+    }
   },
   {
     "num": 41,
@@ -530,7 +850,15 @@
     },
     "answer": "A",
     "explanation": "Mosaic augmentation combines 4 training images into 1 during training, enriching background context and training batch statistics. At test time, normal single images are evaluated, so Mosaic incurs zero inference latency penalty (a pure Bag of Freebies). Mish, PANet, and SPP are Bag of Specials.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: Mosaic Augmentation (Bag of Freebies)",
+    "keyConcept": "Mosaic merges 4 images during training, enriching context without changing test-time computation.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Mosaic data augmentation (combining 4 training images into one)",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Mosaic Augmentation (Bag of Freebies).",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Mosaic Augmentation (Bag of Freebies).",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Mosaic Augmentation (Bag of Freebies)."
+    }
   },
   {
     "num": 42,
@@ -543,7 +871,15 @@
     },
     "answer": "D",
     "explanation": "The SPP block (parallel max pools) and Mish activation are part of the network's forward inference graph, consuming a tiny amount of inference compute while expanding receptive field and smoothing gradients. Label Smoothing, CutMix, and CIoU loss are training-only (Bag of Freebies).",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: SPP Block & Mish (Bag of Specials)",
+    "keyConcept": "SPP blocks and Mish activation are part of the forward graph, providing receptive field gains.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: SPP Block & Mish (Bag of Specials).",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: SPP Block & Mish (Bag of Specials).",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: SPP Block & Mish (Bag of Specials).",
+      "D": "Correct. This precisely matches the lecture slides: SPP (Spatial Pyramid Pooling) block and Mish activation"
+    }
   },
   {
     "num": 43,
@@ -556,7 +892,15 @@
     },
     "answer": "D",
     "explanation": "Mish is defined as $x \\tanh(\\text{softplus}(x))$. It is smooth ($C^\\infty$ continuous), non-monotonic, and self-regularized. Unlike ReLU (whose gradient is strictly zero for $x < 0$, causing dead neurons), Mish maintains a small negative gradient for $x < 0$, allowing gradient flow throughout training.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: Mish Activation Mathematical Properties",
+    "keyConcept": "Mish is smooth, continuously differentiable, and avoids dying ReLU via small negative gradients.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: Mish Activation Mathematical Properties.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: Mish Activation Mathematical Properties.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: Mish Activation Mathematical Properties.",
+      "D": "Correct. This precisely matches the lecture slides: $\\text{Mish}(x) = x \\tanh(\\ln(1 + e^x)) = x \\tanh(\\text{softplus}(x))$; it is continuously differentiable, non-monotonic, and avoids the 'dying ReLU' issue by preserving small negative gradients"
+    }
   },
   {
     "num": 44,
@@ -569,7 +913,15 @@
     },
     "answer": "A",
     "explanation": "In SPP-Net, SPP pooled arbitrary feature maps into 1D vectors to feed fixed-size FC layers. In YOLOv4, SPP is a convolutional feature enhancer: it uses parallel max-pooling kernels with padding (keeping spatial dimensions $H \\times W$ identical) and concatenates all 4 feature maps along the channel axis, enriching receptive fields without changing spatial size.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: SPP Neck Feature Block vs SPP-Net Layer",
+    "keyConcept": "SPP neck blocks preserve spatial dimensions and concatenate parallel max pools into HxWx4C.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: In YOLOv4, SPP is a convolutional neck module: it applies parallel max-pools ($5\\times 5, 9\\times 9, 13\\times 13$) with padding to preserve spatial dimensions and concatenates them with the input feature map, outputting a multi-receptive-field 3D tensor ($H \\times W \\times 4C$)",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: SPP Neck Feature Block vs SPP-Net Layer.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: SPP Neck Feature Block vs SPP-Net Layer.",
+      "D": "Incorrect calculation. Bins: (16 + 4 + 1) = 21. Multiplied by 256 channels = 5,376 dimensions."
+    }
   },
   {
     "num": 45,
@@ -582,7 +934,15 @@
     },
     "answer": "C",
     "explanation": "CSPNet splits feature channels $X \\in \\mathbb{R}^{H \\times W \\times C}$ into two parts. One part traverses the residual bottlenecks; the other bypasses them via a transition conv. Concatenating them at the end prevents duplicated gradient calculations across parallel paths, reducing memory traffic (MAC) and FLOPs by $\\sim 20\\%$ without sacrificing accuracy.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: CSPNet Gradient Splitting & MAC Reduction",
+    "keyConcept": "CSPNet splits feature channels into two paths, cutting duplicate gradient updates and MAC by ~20%.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: CSPNet Gradient Splitting & MAC Reduction.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: CSPNet Gradient Splitting & MAC Reduction.",
+      "C": "Correct. This precisely matches the lecture slides: By splitting the base feature map into two branches: one branch ($C/2$ channels) passes through the dense residual bottlenecks while the other branch bypasses them, concatenating at the stage transition to eliminate duplicate gradient copies",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: CSPNet Gradient Splitting & MAC Reduction."
+    }
   },
   {
     "num": 46,
@@ -595,7 +955,15 @@
     },
     "answer": "C",
     "explanation": "FPN propagates high-level semantic features downward. PANet adds a complementary bottom-up feature path that routes low-level localization information (fine edges, corners) from shallow layers up to the deeper prediction heads via short shortcut paths, improving localization accuracy.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: PANet Bottom-Up Localization Path",
+    "keyConcept": "PANet adds a bottom-up path to route shallow spatial details directly up to prediction heads.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: PANet Bottom-Up Localization Path.",
+      "B": "Incorrect. YOLO models are feedforward convolutional architectures.",
+      "C": "Correct. This precisely matches the lecture slides: To add an augmented bottom-up feature path following top-down FPN, propagating low-level spatial detail (edges, textures from stride 8) directly up to higher-level heads",
+      "D": "Incorrect. 2D object detection operates on individual frames without optical flow."
+    }
   },
   {
     "num": 47,
@@ -608,7 +976,15 @@
     },
     "answer": "B",
     "explanation": "Hard cross-entropy targets (0 and 1) encourage the network to output infinite logits, leading to overconfident predictions and memorization. Label smoothing pulls the target toward a uniform distribution: $y_k^{\\text{smooth}} = y_k(1 - \\epsilon) + \\epsilon/K$. For $\\epsilon = 0.1$, the true class target becomes $0.9 + 0.1/K$, regularizing the model.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: Class Label Smoothing Mathematical Formula",
+    "keyConcept": "Label smoothing curbs overconfidence by shifting hard targets to y(1 - eps) + eps/K.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: Class Label Smoothing Mathematical Formula.",
+      "B": "Correct. This precisely matches the lecture slides: $y_k^{\\text{smooth}} = y_k (1 - \\epsilon) + \\frac{\\epsilon}{K}$; it prevents the network from driving classification logits to $\\pm \\infty$, reducing overconfidence and curbing overfitting",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: Class Label Smoothing Mathematical Formula.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: Class Label Smoothing Mathematical Formula."
+    }
   },
   {
     "num": 48,
@@ -621,7 +997,15 @@
     },
     "answer": "A",
     "explanation": "Modern YOLO training decomposes into three multi-task loss terms: $L_{\\text{box}}$ (CIoU / GIoU for bounding box geometry), $L_{\\text{obj}}$ (BCE with logits for foreground/background objectness confidence), and $L_{\\text{cls}}$ (BCE with logits for multi-class identification).",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: Total Multi-Task Loss Decomposition",
+    "keyConcept": "Total loss combines bounding box regression (CIoU), objectness BCE, and classification BCE.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: $L_{\\text{total}} = \\lambda_{\\text{box}} L_{\\text{box}} + \\lambda_{\\text{obj}} L_{\\text{obj}} + \\lambda_{\\text{cls}} L_{\\text{cls}}$ (Bounding Box Geometric Loss + Objectness BCE Loss + Classification BCE Loss)",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Total Multi-Task Loss Decomposition.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Total Multi-Task Loss Decomposition.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Total Multi-Task Loss Decomposition."
+    }
   },
   {
     "num": 49,
@@ -634,7 +1018,15 @@
     },
     "answer": "D",
     "explanation": "In YOLOv5/v7 YAML syntax, each layer follows `[from, number, module, args]`. `from` specifies the input layer ($-1$ is previous layer, or list of indices like `[6, -1]` for concat); `number` is how many times the module repeats; `module` is the PyTorch module class (e.g., `Conv`, `BottleneckCSP`, `Detect`); `args` are constructor arguments (channels, kernel, stride).",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: YOLO Architecture YAML Line Syntax",
+    "keyConcept": "YAML layer line format: [input_layer_idx, repeat_count, module_name, constructor_args].",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLO Architecture YAML Line Syntax.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLO Architecture YAML Line Syntax.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: YOLO Architecture YAML Line Syntax.",
+      "D": "Correct. This precisely matches the lecture slides: `from`: input layer index; `number`: repetition count; `module`: PyTorch layer class name; `args`: arguments passed to module constructor"
+    }
   },
   {
     "num": 50,
@@ -647,7 +1039,15 @@
     },
     "answer": "C",
     "explanation": "`-1` indicates the input comes from the preceding layer; `3` repeats the bottleneck residual unit 3 times; `BottleneckCSP` is the Cross Stage Partial Bottleneck class; and `[256]` configures the output channels to 256.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: Interpreting BottleneckCSP YAML Definitions",
+    "keyConcept": "[-1, 3, BottleneckCSP, [256]] stacks 3 bottlenecks inside a 256-channel CSP block from previous layer.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Interpreting BottleneckCSP YAML Definitions.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Interpreting BottleneckCSP YAML Definitions.",
+      "C": "Correct. This precisely matches the lecture slides: Take input from the immediately preceding layer ($-1$), repeat the internal Bottleneck block 3 times inside a `BottleneckCSP` module, and set output channel dimension to 256",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Interpreting BottleneckCSP YAML Definitions."
+    }
   },
   {
     "num": 51,
@@ -660,7 +1060,15 @@
     },
     "answer": "D",
     "explanation": "`[27, 22, 15]` routes multi-scale features from stride 8 (P3), stride 16 (P4), and stride 32 (P5) into the `Detect` head. The head applies parallel $1 \\times 1$ convs across all three feature maps to predict bounding boxes, objectness, and class scores for $nc$ classes with assigned anchors.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: Interpreting Detect Head Multi-Index YAML",
+    "keyConcept": "[[27, 22, 15], 1, Detect, [nc, anchors]] routes P3, P4, P5 multi-scale feature maps into Detect head.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: Interpreting Detect Head Multi-Index YAML.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: Interpreting Detect Head Multi-Index YAML.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: Interpreting Detect Head Multi-Index YAML.",
+      "D": "Correct. This precisely matches the lecture slides: Feed feature maps from layers 27 (P3), 22 (P4), and 15 (P5) into a single `Detect` module that instantiates 3 dense prediction heads for $nc$ classes using pre-defined anchor tuples"
+    }
   },
   {
     "num": 52,
@@ -673,7 +1081,15 @@
     },
     "answer": "C",
     "explanation": "Object sizes in natural images vary by orders of magnitude. By receiving feature maps from P3 (stride 8), P4 (stride 16), and P5 (stride 32), the Detect module can apply dedicated convolutional prediction heads tailored to small, medium, and large objects simultaneously.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: Why Detect Head Requires Multi-Scale Inputs",
+    "keyConcept": "Detect head requires multi-scale pyramid inputs to run scale-specialized prediction convolutions.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Why Detect Head Requires Multi-Scale Inputs.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Why Detect Head Requires Multi-Scale Inputs.",
+      "C": "Correct. This precisely matches the lecture slides: Dense detection requires multi-scale feature pyramids so that small objects are predicted at fine strides (P3/8), medium objects at intermediate strides (P4/16), and large objects at coarse strides (P5/32)",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Why Detect Head Requires Multi-Scale Inputs."
+    }
   },
   {
     "num": 53,
@@ -686,7 +1102,15 @@
     },
     "answer": "C",
     "explanation": "Because adjacent pixels in convolutional feature maps share nearly identical activations, dropping isolated units (standard Dropout) fails because nearby pixels leak the dropped information. DropBlock zeros out entire continuous 2D blocks of features, forcing the network to learn robust, distributed visual patterns.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: DropBlock Spatial Regularization vs Dropout",
+    "keyConcept": "DropBlock drops contiguous 2D square patches, preventing conv features from leaking through neighbors.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: DropBlock Spatial Regularization vs Dropout.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: DropBlock Spatial Regularization vs Dropout.",
+      "C": "Correct. This precisely matches the lecture slides: Standard Dropout drops isolated random pixels, which convolutional features can easily circumvent due to neighboring spatial correlation; DropBlock drops contiguous 2D square patches (e.g., $7 \\times 7$), forcing the network to learn spatially distributed representations",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: DropBlock Spatial Regularization vs Dropout."
+    }
   },
   {
     "num": 54,
@@ -699,7 +1123,15 @@
     },
     "answer": "D",
     "explanation": "MixUp linearly interpolates pixel intensities, creating ghost-like translucent overlays that never occur in real scenes. CutMix cuts out a rectangular patch from image B and pastes it over image A, preserving realistic object textures, edges, and occlusion boundaries while mixing target labels proportionally to the pasted area.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: CutMix Physical Patching vs Linear MixUp",
+    "keyConcept": "CutMix pastes rectangular patches preserving textures, while MixUp linearly blends ghost images.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: CutMix Physical Patching vs Linear MixUp.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: CutMix Physical Patching vs Linear MixUp.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: CutMix Physical Patching vs Linear MixUp.",
+      "D": "Correct. This precisely matches the lecture slides: MixUp blends two entire images linearly ($\\lambda x_1 + (1-\\lambda)x_2$), producing unnatural semi-transparent images; CutMix cuts a physical rectangular patch from $x_2$ and pastes it into $x_1$, preserving natural texture gradients and proportioning labels by patch area"
+    }
   },
   {
     "num": 55,
@@ -712,7 +1144,15 @@
     },
     "answer": "A",
     "explanation": "YOLOv3 aligns the centers of the ground truth box and all 9 pre-defined anchor templates at $(0, 0)$ and calculates their IoU overlap. The single anchor prior with the highest IoU is chosen as the responsible template for that object.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: YOLOv3 Center-Aligned Anchor IoU Assignment",
+    "keyConcept": "YOLOv3 matches objects to the single anchor template with highest IoU with centers at origin.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: By aligning the ground truth box and all 9 anchor priors at coordinate $(0, 0)$ and selecting the single anchor that has the highest IoU overlap with the ground truth box",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv3 Center-Aligned Anchor IoU Assignment.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv3 Center-Aligned Anchor IoU Assignment.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: YOLOv3 Center-Aligned Anchor IoU Assignment."
+    }
   },
   {
     "num": 56,
@@ -725,7 +1165,15 @@
     },
     "answer": "C",
     "explanation": "In YOLOv3, each cell-anchor slot can store only one target tuple. If two ground truth objects share the same cell and match the same anchor index, one will overwrite the other in the training label tensor. (This motivated YOLOv5's multi-cell and multi-anchor assignment improvements).",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: Anchor Collision Overwrite in YOLOv3 Cells",
+    "keyConcept": "Same-cell objects matching the same anchor overwrite each other in the YOLOv3 label tensor.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Anchor Collision Overwrite in YOLOv3 Cells.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Anchor Collision Overwrite in YOLOv3 Cells.",
+      "C": "Correct. This precisely matches the lecture slides: One ground-truth object overwrites the other in the target tensor, causing an unavoidable missed detection (False Negative) during training",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Anchor Collision Overwrite in YOLOv3 Cells."
+    }
   },
   {
     "num": 57,
@@ -738,7 +1186,15 @@
     },
     "answer": "C",
     "explanation": "Cosine Annealing smoothly reduces the learning rate from $\\eta_{\\max}$ to $\\eta_{\\min}$ following a cosine wave: $\\eta_t = \\eta_{\\min} + \\frac{1}{2}(\\eta_{\\max} - \\eta_{\\min})(1 + \\cos(\\frac{t}{T}\\pi))$. This smooth transition prevents optimization shocks from abrupt step decays and yields superior generalization.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: Cosine Annealing Learning Rate Scheduling",
+    "keyConcept": "Cosine annealing smoothly decays learning rate, avoiding optimization shocks from step drops.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Cosine Annealing Learning Rate Scheduling.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Cosine Annealing Learning Rate Scheduling.",
+      "C": "Correct. This precisely matches the lecture slides: It smoothly decays the learning rate following a cosine curve rather than abrupt step drops, allowing deep exploration of the parameter landscape early and smooth settlement into flat, robust minima late in training",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Cosine Annealing Learning Rate Scheduling."
+    }
   },
   {
     "num": 58,
@@ -751,7 +1207,15 @@
     },
     "answer": "A",
     "explanation": "Unlike two-stage detectors that evaluate a sparse set of $\\sim 300$ candidate proposals generated by RPN, one-stage detectors predict bounding boxes, objectness, and class distributions at every single grid cell across all pyramid levels (yielding 10,000 to 25,000 predictions per image), making them dense predictors.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: Dense Prediction Paradigm in Single-Stage",
+    "keyConcept": "Dense predictors generate 10,000-25,000 candidate boxes across all spatial cells in a single pass.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: Because they evaluate candidate bounding boxes across every spatial grid cell at all feature levels simultaneously, generating tens of thousands of candidate predictions in a single forward pass without pre-filtering",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Dense Prediction Paradigm in Single-Stage.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: Dense Prediction Paradigm in Single-Stage.",
+      "D": "Incorrect. 2D object detection operates on individual frames without optical flow."
+    }
   },
   {
     "num": 59,
@@ -764,7 +1228,15 @@
     },
     "answer": "C",
     "explanation": "$1 \\times 1$ convolutions act as channel bottlenecks (cross-channel parametric pooling). They compress channel depth (e.g., from 1024 to 512) before upsampling and concatenation, keeping compute and memory access costs efficient during multi-scale feature fusion.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 9: 1x1 Convolution Neck Channel Compression",
+    "keyConcept": "1x1 convolutions act as channel bottlenecks, compressing features before multi-scale fusion.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: 1x1 Convolution Neck Channel Compression.",
+      "B": "Incorrect. CNN backbones routinely process 3-channel RGB image crops without losing color channels.",
+      "C": "Correct. This precisely matches the lecture slides: To reduce channel dimensionality before computationally expensive upsampling and concatenation operations, controlling FLOPs and memory consumption",
+      "D": "Incorrect. YOLOv3 uses strides 8 (P3), 16 (P4), and 32 (P5)."
+    }
   },
   {
     "num": 60,
@@ -777,7 +1249,15 @@
     },
     "answer": "C",
     "explanation": "In crowded scenes (e.g., two people walking side by side), two legitimate bounding boxes can have high IoU overlap ($\\ge 0.5$). Standard IoU-NMS deletes the second object. DIoU-NMS incorporates the normalized distance between box centers: if centers are far apart, suppression is relaxed, preserving occluded objects.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: DIoU Distance Penalty in Post-Processing NMS",
+    "keyConcept": "DIoU-NMS incorporates center point distance, preventing false suppression of adjacent true objects.",
+    "optionContext": {
+      "A": "Incorrect. SVM classification on CPU takes only a few milliseconds and was not the primary bottleneck.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: DIoU Distance Penalty in Post-Processing NMS.",
+      "C": "Correct. This precisely matches the lecture slides: Standard IoU-NMS suppresses boxes based solely on area overlap, erroneously deleting adjacent true objects in dense crowds; DIoU-NMS incorporates center point distance, retaining overlapping boxes if their centers are distinctly separated",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: DIoU Distance Penalty in Post-Processing NMS."
+    }
   },
   {
     "num": 61,
@@ -790,7 +1270,15 @@
     },
     "answer": "A",
     "explanation": "At stride 32: $\\text{Grid Width} = 640 / 32 = 20$, $\\text{Grid Height} = 640 / 32 = 20$. The P5 feature map has a spatial resolution of $20 \\times 20$ grid cells, with each cell corresponding to a $32 \\times 32$ pixel receptive field on the input image.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: P5 Feature Map Stride 32 Spatial Calculations",
+    "keyConcept": "640x640 image downsampled by stride 32 produces a 20x20 spatial feature grid on P5.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: $20 \\times 20$ cells",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: P5 Feature Map Stride 32 Spatial Calculations.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: P5 Feature Map Stride 32 Spatial Calculations.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 9: P5 Feature Map Stride 32 Spatial Calculations."
+    }
   },
   {
     "num": 62,
@@ -803,7 +1291,15 @@
     },
     "answer": "B",
     "explanation": "At stride 8: $\\text{Grid Width} = 640 / 8 = 80$, $\\text{Grid Height} = 640 / 8 = 80$. The P3 feature map has a fine spatial resolution of $80 \\times 80 = 6,400$ grid cells, dedicated to small object detection.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: P3 Feature Map Stride 8 Spatial Calculations",
+    "keyConcept": "640x640 image downsampled by stride 8 produces an 80x80 spatial feature grid on P3.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: P3 Feature Map Stride 8 Spatial Calculations.",
+      "B": "Correct. This precisely matches the lecture slides: $80 \\times 80$ cells",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: P3 Feature Map Stride 8 Spatial Calculations.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 9: P3 Feature Map Stride 8 Spatial Calculations."
+    }
   },
   {
     "num": 63,
@@ -816,7 +1312,15 @@
     },
     "answer": "C",
     "explanation": "Under standard cross-entropy with hard one-hot targets ($y=1$), the gradient $\\frac{\\partial L}{\\partial z_k} = p_k - 1$ only reaches zero when predicted probability $p_k \\to 1$, requiring logits $z_k \\to \\infty$. Label smoothing sets target to $1 - \\epsilon$, providing stable, non-saturating gradients and regularizing weights.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: Label Smoothing Influence on CE Logits",
+    "keyConcept": "Label smoothing prevents cross-entropy loss from driving logit weights to infinity.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Label Smoothing Influence on CE Logits.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Label Smoothing Influence on CE Logits.",
+      "C": "Correct. This precisely matches the lecture slides: It bounds target probabilities away from 1.0 (e.g., to $1 - \\epsilon$), preventing the loss gradient from requiring infinitely large logit magnitudes and curbing model overconfidence",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Label Smoothing Influence on CE Logits."
+    }
   },
   {
     "num": 64,
@@ -829,7 +1333,15 @@
     },
     "answer": "D",
     "explanation": "Darknet-19 (YOLOv2) was a simple feedforward CNN without residuals; Darknet-53 (YOLOv3) introduced residual skip connections across 53 layers for deeper representation learning; CSPDarknet53 (YOLOv4) applied Cross Stage Partial channel splitting, reducing duplicated gradients and cutting memory bandwidth (MAC) by ~20% at superior accuracy.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 9: Backbone Evolution: Darknet-19 vs 53 vs CSP",
+    "keyConcept": "CSPDarknet53 splits gradient paths, reducing FLOPs by 20% while matching Darknet-53 accuracy.",
+    "optionContext": {
+      "A": "Incorrect. SPP-Net does not use recurrent LSTM cells.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 9: Backbone Evolution: Darknet-19 vs 53 vs CSP.",
+      "C": "Incorrect distractor. AlexNet forward passes take ~45s per image across 2,000 crops.",
+      "D": "Correct. This precisely matches the lecture slides: Darknet-19 has 19 layers with no residuals; Darknet-53 adds ResNet-style residual blocks across 53 layers; CSPDarknet53 splits feature flow into two paths, cutting FLOPs/MAC by $\\sim 20\\%$ while matching or exceeding Darknet-53 accuracy"
+    }
   },
   {
     "num": 65,
@@ -842,7 +1354,15 @@
     },
     "answer": "C",
     "explanation": "On automotive real-time systems, execution latency predictability is vital. Two-stage detectors require dynamic branching: waiting for RPN proposals, sorting, NMS, and cropping variable RoIs. One-stage detectors execute a single static forward graph directly on GPU Tensor Cores, guaranteeing steady, deterministic $\\ge 30$ FPS frame rates.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 9: Static Computation Graph on AV Edge HW",
+    "keyConcept": "One-stage detectors execute a single static graph, ensuring deterministic real-time latency on edge HW.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Static Computation Graph on AV Edge HW.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Static Computation Graph on AV Edge HW.",
+      "C": "Correct. This precisely matches the lecture slides: One-stage detectors execute as a single, static computation graph with fixed memory layout and predictable latency, allowing full GPU hardware utilization without dynamic proposal synchronization bottlenecks",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 9: Static Computation Graph on AV Edge HW."
+    }
   },
   {
     "num": 66,
@@ -855,7 +1375,15 @@
     },
     "answer": "D",
     "explanation": "In YOLOv3, predicting an object center exactly on or slightly across a grid cell edge ($0.0$ or $1.0$) required sigmoid logits $t_x$ to approach $\\pm \\infty$. YOLOv5 uses $b_x = (2\\sigma(t_x) - 0.5) + c_x$. Since $\\sigma \\in (0, 1)$, the range becomes $(-0.5, 1.5)$, allowing predicted centers to easily cross grid boundaries with moderate, well-behaved gradients.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: YOLOv5 Grid Sensitivity Shift (-0.5, 1.5)",
+    "keyConcept": "YOLOv5 expands center prediction range to (-0.5, 1.5), eliminating grid edge gradient saturation.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: YOLOv5 Grid Sensitivity Shift (-0.5, 1.5).",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: YOLOv5 Grid Sensitivity Shift (-0.5, 1.5).",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: YOLOv5 Grid Sensitivity Shift (-0.5, 1.5).",
+      "D": "Correct. This precisely matches the lecture slides: In YOLOv3, $b_x = \\sigma(t_x) + c_x$; reaching the cell boundary (0 or 1) requires $t_x \\to \\pm \\infty$, causing gradient instability; YOLOv5 scales and shifts the sigmoid to $b_x = (2\\sigma(t_x) - 0.5) + c_x$, expanding the prediction range to $(-0.5, 1.5)$"
+    }
   },
   {
     "num": 67,
@@ -868,7 +1396,15 @@
     },
     "answer": "D",
     "explanation": "In YOLOv3/v4, $b_w = p_w e^{t_w}$. An unconstrained network output $t_w = 10$ yielded $e^{10} \\approx 22,026$, causing catastrophic gradient explosions. YOLOv5 bounds width/height regression using $b_w = p_w (2\\sigma(t_w))^2$. Since $2\\sigma(t) \\in (0, 2)$, $(2\\sigma(t))^2 \\in (0, 4)$, bounding box scale strictly between 0 and $4\\times$ the anchor dimension.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Bounded Width/Height (0, 4a) Regression",
+    "keyConcept": "YOLOv5 bounds width/height regression to (0, 4a) via (2*sigmoid)^2, preventing gradient explosions.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Bounded Width/Height (0, 4a) Regression.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Bounded Width/Height (0, 4a) Regression.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Bounded Width/Height (0, 4a) Regression.",
+      "D": "Correct. This precisely matches the lecture slides: By replacing $b_w = p_w e^{t_w}$ with bounded regression $b_w = p_w \\cdot (2\\sigma(t_w))^2$, restricting predicted width strictly to the range $(0, 4 \\cdot p_w)$"
+    }
   },
   {
     "num": 68,
@@ -881,7 +1417,15 @@
     },
     "answer": "D",
     "explanation": "In YOLOv5 PyTorch source code (shown in Lecture 10 slides), the network outputs sigmoid-activated values in `y[..., 2:4]`. The decoding line is `y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]`, directly implementing $b_w = p_w (2\\sigma(t_w))^2$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: YOLOv5 PyTorch Anchor Decoding Tensor Code",
+    "keyConcept": "PyTorch decoding: y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i].",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: YOLOv5 PyTorch Anchor Decoding Tensor Code.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: YOLOv5 PyTorch Anchor Decoding Tensor Code.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: YOLOv5 PyTorch Anchor Decoding Tensor Code.",
+      "D": "Correct. This precisely matches the lecture slides: `y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]`"
+    }
   },
   {
     "num": 69,
@@ -894,7 +1438,15 @@
     },
     "answer": "C",
     "explanation": "Instead of IoU thresholding, YOLOv5 compares dimensions: it calculates $r_w = \\max(w_{\\text{gt}}/w_a, w_a/w_{\\text{gt}})$ and $r_h = \\max(h_{\\text{gt}}/h_a, h_a/h_{\\text{gt}})$. If $\\max(r_w, r_h) < 4.0$, the anchor is assigned as a positive training match, allowing multiple anchors across scales to match a single ground truth object.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Anchor Matching Ratio Rule (max(rw, rh) < 4.0)",
+    "keyConcept": "Positive anchor matching rule: max(w_gt/w_a, w_a/w_gt) and max(h_gt/h_a, h_a/h_gt) < 4.0.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Anchor Matching Ratio Rule (max(rw, rh) < 4.0).",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Anchor Matching Ratio Rule (max(rw, rh) < 4.0).",
+      "C": "Correct. This precisely matches the lecture slides: The aspect ratio ratios $r_w = \\max(w_{\\text{gt}}/w_a, w_a/w_{\\text{gt}})$ and $r_h = \\max(h_{\\text{gt}}/h_a, h_a/h_{\\text{gt}})$ must satisfy $\\max(r_w, r_h) < 4.0$",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Anchor Matching Ratio Rule (max(rw, rh) < 4.0)."
+    }
   },
   {
     "num": 70,
@@ -907,7 +1459,15 @@
     },
     "answer": "A",
     "explanation": "Because YOLOv5 center prediction range is $(-0.5, 1.5)$, neighboring cells can also predict the box center. Based on which quadrant of the grid cell the center falls in, YOLOv5 assigns the primary cell plus its two closest adjacent neighbor cells (up to 3 cells total), tripling positive training samples and boosting small-object recall.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Multi-Cell Positive Assignment (Up to 3 Cells)",
+    "keyConcept": "Multi-cell assignment assigns primary cell plus two closest neighbors (up to 3 cells per object).",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: In addition to the cell containing the ground-truth center $(c_x, c_y)$, it checks the center offset $(\\Delta x, \\Delta y)$; if $\\Delta x < 0.5$, it assigns the left neighbor cell (if $\\ge 0.5$, the right neighbor); vertically, it assigns the top or bottom neighbor, assigning up to 3 grid cells per object",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Multi-Cell Positive Assignment (Up to 3 Cells).",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Multi-Cell Positive Assignment (Up to 3 Cells).",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Multi-Cell Positive Assignment (Up to 3 Cells)."
+    }
   },
   {
     "num": 71,
@@ -920,7 +1480,15 @@
     },
     "answer": "A",
     "explanation": "P3 has 16 times as many spatial cells as P5 ($80 \\times 80 = 6,400$ vs. $20 \\times 20 = 400$). To balance gradient contributions and place sufficient emphasis on small objects, YOLOv5 weights objectness loss as: P3 (stride 8) = 4.0, P4 (stride 16) = 1.0, P5 (stride 32) = 0.4.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 10: Scale-Balancing Weights for Objectness Loss",
+    "keyConcept": "Objectness loss scales are weighted: P3 = 4.0, P4 = 1.0, P5 = 0.4 to balance cell counts.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: P3: 4.0, P4: 1.0, P5: 0.4",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Scale-Balancing Weights for Objectness Loss.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Scale-Balancing Weights for Objectness Loss.",
+      "D": "Incorrect. Different strides have vastly different cell counts (e.g. 6,400 vs 400), requiring scale balancing weights (4.0, 1.0, 0.4)."
+    }
   },
   {
     "num": 72,
@@ -933,7 +1501,15 @@
     },
     "answer": "D",
     "explanation": "Rather than forcing every positive anchor to predict a hard target of 1.0 regardless of localization quality, YOLOv5 uses CIoU score as a soft target ($y_{\\text{obj}} = \\text{CIoU}$). This teaches the network to output higher objectness confidence when bounding box alignment is high.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 10: Soft CIoU Quality Targets for Objectness",
+    "keyConcept": "IoU quality weighting sets the positive objectness target to the predicted box CIoU score.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Soft CIoU Quality Targets for Objectness.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Soft CIoU Quality Targets for Objectness.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Soft CIoU Quality Targets for Objectness.",
+      "D": "Correct. This precisely matches the lecture slides: Setting the positive objectness regression target to the predicted box's CIoU score with ground truth ($y_{\\text{obj}} = \\text{CIoU}$) rather than a hard binary target of 1.0"
+    }
   },
   {
     "num": 73,
@@ -946,7 +1522,15 @@
     },
     "answer": "B",
     "explanation": "If two boxes do not overlap, $\\text{Area}(A \\cap B) = 0$, so $\\text{IoU} = 0$. The loss is a flat constant ($1.0$), and the gradient vanishes ($\\nabla = 0$). The optimizer has no direction to guide the predicted box toward the ground truth.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Zero-Gradient Defect of Standard IoU Loss",
+    "keyConcept": "Standard IoU loss has zero gradient when predicted and ground truth boxes have zero overlap.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Zero-Gradient Defect of Standard IoU Loss.",
+      "B": "Correct. This precisely matches the lecture slides: When predicted and ground-truth boxes do not overlap ($\\text{IoU} = 0$), $L_{\\text{IoU}} = 1.0$ and its gradient $\\nabla L_{\\text{IoU}} = 0$, providing zero optimization signal to move non-overlapping boxes toward each other",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Zero-Gradient Defect of Standard IoU Loss.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Zero-Gradient Defect of Standard IoU Loss."
+    }
   },
   {
     "num": 74,
@@ -959,7 +1543,15 @@
     },
     "answer": "B",
     "explanation": "GIoU defines $C$ as the smallest convex enclosing box containing both prediction $A$ and ground truth $B$. When $A$ and $B$ do not overlap, GIoU penalizes the empty space $|C \\setminus (A \\cup B)| / |C|$, providing a continuous gradient that drives non-overlapping boxes toward each other.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Generalized IoU (GIoU) Enclosing Box Penalty",
+    "keyConcept": "GIoU penalizes empty space in the smallest enclosing box C: 1 - (IoU - |C \\ (A U B)| / |C|).",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Generalized IoU (GIoU) Enclosing Box Penalty.",
+      "B": "Correct. This precisely matches the lecture slides: $L_{\\text{GIoU}} = 1 - \\left( \\text{IoU} - \\frac{|C \\setminus (A \\cup B)|}{|C|} \\right)$ where $C$ is the smallest convex enclosing box covering both $A$ and $B$",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Generalized IoU (GIoU) Enclosing Box Penalty.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Generalized IoU (GIoU) Enclosing Box Penalty."
+    }
   },
   {
     "num": 75,
@@ -972,7 +1564,15 @@
     },
     "answer": "B",
     "explanation": "When one box completely encloses the other, the smallest enclosing box $C$ is simply the larger box itself, so $C = A \\cup B$ and the empty space $|C \\setminus (A \\cup B)| = 0$. In this case, $\\text{GIoU} = \\text{IoU}$, and GIoU cannot evaluate relative position or center alignment inside the enclosing box.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 10: GIoU Degradation Under Full Box Enclosure",
+    "keyConcept": "When one box completely encloses the other, enclosing box C = outer box and GIoU degrades to IoU.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: GIoU Degradation Under Full Box Enclosure.",
+      "B": "Correct. This precisely matches the lecture slides: When one bounding box completely encloses the other ($A \\subseteq B$ or $B \\subseteq A$)",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: GIoU Degradation Under Full Box Enclosure.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: GIoU Degradation Under Full Box Enclosure."
+    }
   },
   {
     "num": 76,
@@ -985,7 +1585,15 @@
     },
     "answer": "B",
     "explanation": "DIoU directly minimizes the normalized distance between the central points of the predicted box $b$ and ground truth box $b^{\\text{gt}}$: $\\mathcal{R}_{\\text{DIoU}} = \\frac{\\rho^2(b, b^{\\text{gt}})}{c^2}$, where $c$ is the diagonal length of the smallest enclosing box. DIoU loss is $1 - \\text{IoU} + \\frac{\\rho^2}{c^2}$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Distance-IoU (DIoU) Central Distance Penalty",
+    "keyConcept": "DIoU minimizes normalized Euclidean distance between box center points: 1 - IoU + rho^2 / c^2.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Distance-IoU (DIoU) Central Distance Penalty.",
+      "B": "Correct. This precisely matches the lecture slides: $L_{\\text{DIoU}} = 1 - \\text{IoU} + \\frac{\\rho^2(b, b^{\\text{gt}})}{c^2}$ where $\\rho$ is center Euclidean distance and $c$ is the diagonal length of the smallest enclosing box",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Distance-IoU (DIoU) Central Distance Penalty.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Distance-IoU (DIoU) Central Distance Penalty."
+    }
   },
   {
     "num": 77,
@@ -998,7 +1606,15 @@
     },
     "answer": "B",
     "explanation": "CIoU accounts for three geometric factors: overlap area (IoU), central point distance (DIoU term), and aspect ratio consistency $(\\alpha v)$. The parameter $v$ measures the discrepancy between aspect angles: $v = \\frac{4}{\\pi^2}(\\arctan(w_{\\text{gt}}/h_{\\text{gt}}) - \\arctan(w/h))^2$, and $\\alpha = \\frac{v}{(1-\\text{IoU})+v}$ balances the aspect penalty.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Complete IoU (CIoU) Aspect Ratio Geometry",
+    "keyConcept": "CIoU adds aspect ratio consistency penalty alpha*v to DIoU loss.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Complete IoU (CIoU) Aspect Ratio Geometry.",
+      "B": "Correct. This precisely matches the lecture slides: $L_{\\text{CIoU}} = 1 - \\text{IoU} + \\frac{\\rho^2(b, b^{\\text{gt}})}{c^2} + \\alpha v$, where $v = \\frac{4}{\\pi^2}\\left(\\arctan\\frac{w^{\\text{gt}}}{h^{\\text{gt}}} - \\arctan\\frac{w}{h}\\right)^2$ and $\\alpha = \\frac{v}{(1 - \\text{IoU}) + v}$",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Complete IoU (CIoU) Aspect Ratio Geometry.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Complete IoU (CIoU) Aspect Ratio Geometry."
+    }
   },
   {
     "num": 78,
@@ -1011,7 +1627,15 @@
     },
     "answer": "D",
     "explanation": "If the predicted box has the same aspect ratio as the ground truth box ($w/h = w_{\\text{gt}}/h_{\\text{gt}}$), then $\\arctan(w_{\\text{gt}}/h_{\\text{gt}}) - \\arctan(w/h) = 0$. Hence $v = 0$, causing the aspect ratio penalty $\\alpha v$ to drop to 0, simplifying CIoU to DIoU.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 10: CIoU Simplification to DIoU at Equal Aspect",
+    "keyConcept": "When predicted and ground truth aspect ratios match, v = 0 and CIoU simplifies to DIoU.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: CIoU Simplification to DIoU at Equal Aspect.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: CIoU Simplification to DIoU at Equal Aspect.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: CIoU Simplification to DIoU at Equal Aspect.",
+      "D": "Correct. This precisely matches the lecture slides: When the predicted box and ground truth box have the exact same aspect ratio ($w/h = w_{\\text{gt}}/h_{\\text{gt}}$)"
+    }
   },
   {
     "num": 79,
@@ -1024,7 +1648,15 @@
     },
     "answer": "A",
     "explanation": "Standard $L_1$ and $L_2$ losses produce errors proportional to pixel dimensions: a 5-pixel error on a 400-pixel truck creates a massive loss, while a 5-pixel error on a 10-pixel distant pedestrian creates a tiny loss. IoU losses are scale-invariant, penalizing relative localization errors equally regardless of absolute pixel size.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Dimensionless Scale-Invariance in AV Perception",
+    "keyConcept": "IoU losses are scale-invariant, penalizing errors on distant pedestrians equally to close trucks.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: IoU ratios are dimensionless; in autonomous driving, distant pedestrians appear as tiny $15 \\times 8$ pixel boxes while nearby trucks appear as $400 \\times 300$ pixel boxes. Scale invariance ensures errors on distant, safety-critical hazards generate meaningful gradient signals",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Dimensionless Scale-Invariance in AV Perception.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Dimensionless Scale-Invariance in AV Perception.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Dimensionless Scale-Invariance in AV Perception."
+    }
   },
   {
     "num": 80,
@@ -1037,7 +1669,15 @@
     },
     "answer": "B",
     "explanation": "Hard NMS sorts candidate boxes by confidence score, greedily selects the highest-scoring box $M$, outputs it, and deletes (sets score to 0) any remaining box that overlaps with $M$ above threshold $\\tau_{\\text{NMS}}$ (typically $0.45 - 0.65$), repeating iteratively.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Hard NMS Greed-Based Pruning Loop",
+    "keyConcept": "Hard NMS sorts by confidence and deletes any box with IoU >= threshold with the top box.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Hard NMS Greed-Based Pruning Loop.",
+      "B": "Correct. This precisely matches the lecture slides: Sort boxes by confidence; select top box $M$; calculate IoU between $M$ and all other boxes; completely discard any box where $\\text{IoU} \\ge \\tau_{\\text{NMS}}$; repeat until no boxes remain",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Hard NMS Greed-Based Pruning Loop.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Hard NMS Greed-Based Pruning Loop."
+    }
   },
   {
     "num": 81,
@@ -1050,7 +1690,15 @@
     },
     "answer": "A",
     "explanation": "When two distinct real-world objects occlude each other (such as a pedestrian standing in front of another pedestrian), their true bounding boxes can overlap with $\\text{IoU} > 0.5$. Hard NMS selects the higher-confidence box and completely discards the second true object, creating a fatal blind spot.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Hard NMS Failure in Crowded Traffic Occlusions",
+    "keyConcept": "Hard NMS deletes adjacent true objects in dense crowds whenever their boxes overlap with IoU >= 0.5.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: In crowded scenes (e.g., pedestrians walking side-by-side or cars queued in adjacent lanes), legitimate distinct objects overlap with $\\text{IoU} \\ge \\tau_{\\text{NMS}}$; Hard NMS suppresses the lower-confidence true object, causing a dangerous False Negative (missed detection)",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Hard NMS Failure in Crowded Traffic Occlusions.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Hard NMS Failure in Crowded Traffic Occlusions.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Hard NMS Failure in Crowded Traffic Occlusions."
+    }
   },
   {
     "num": 82,
@@ -1063,7 +1711,15 @@
     },
     "answer": "B",
     "explanation": "Soft-NMS replaces the hard step-function pruning with a continuous Gaussian decay: $s_i = s_i \\exp(-\\text{IoU}(M, b_i)^2 / \\sigma)$. Highly overlapping duplicate boxes have their scores drastically demoted, while genuine occluded objects suffer milder penalties, allowing them to survive.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 10: Soft-NMS Continuous Gaussian Confidence Decay",
+    "keyConcept": "Soft-NMS exponentially decays confidence scores via Gaussian penalty s*exp(-IoU^2/sigma).",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Soft-NMS Continuous Gaussian Confidence Decay.",
+      "B": "Correct. This precisely matches the lecture slides: $s_i = s_i \\exp\\left(-\\frac{\\text{IoU}(M, b_i)^2}{\\sigma}\\right)$; instead of abruptly zeroing out overlapping boxes, it continuously decays their confidence score based on overlap severity, allowing genuine occluded objects to survive with reduced scores",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Soft-NMS Continuous Gaussian Confidence Decay.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Soft-NMS Continuous Gaussian Confidence Decay."
+    }
   },
   {
     "num": 83,
@@ -1076,7 +1732,15 @@
     },
     "answer": "D",
     "explanation": "DIoU-NMS subtracts the normalized central point distance penalty: metric $= \\text{IoU}(M, b_i) - R_{\\text{DIoU}}(M, b_i)$. If two objects overlap but have separate centers (e.g., adjacent pedestrians), $R_{\\text{DIoU}}$ reduces the suppression metric, keeping it below threshold $\\epsilon$ and preserving both boxes.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 10: DIoU-NMS Distance-Aware Preservation",
+    "keyConcept": "DIoU-NMS subtracts center distance penalty from IoU, preserving overlapping boxes with separated centers.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: DIoU-NMS Distance-Aware Preservation.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: DIoU-NMS Distance-Aware Preservation.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: DIoU-NMS Distance-Aware Preservation.",
+      "D": "Correct. This precisely matches the lecture slides: Boxes are suppressed if $\\text{IoU}(M, b_i) - \\frac{\\rho^2(b_M, b_i)}{c^2} \\ge \\epsilon$; if two overlapping boxes have distinct centers, the distance penalty lowers the metric below threshold $\\epsilon$, preserving both detections"
+    }
   },
   {
     "num": 84,
@@ -1089,7 +1753,15 @@
     },
     "answer": "A",
     "explanation": "A prediction is a True Positive iff: (1) Correct category label; (2) Spatial overlap $\\text{IoU} \\ge \\tau$ with ground truth; (3) It is the highest-confidence prediction matching that specific ground truth box (first come, first served). Duplicate predictions for the same GT box are marked as False Positives.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: True Positive (TP) Evaluation Triad Criteria",
+    "keyConcept": "True Positive requires correct class, IoU >= threshold, and being the highest-confidence match.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: (1) Predicted class matches ground-truth class; (2) Overlap satisfies $\\text{IoU}(B_{\\text{pred}}, B_{\\text{gt}}) \\ge \\tau$ (e.g., $0.50$); (3) The ground-truth box has not already been matched to a higher-scoring prediction",
+      "B": "Incorrect. This describes full autonomous vehicle sensor hardware, not the internal CNN detector grammar.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: True Positive (TP) Evaluation Triad Criteria.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: True Positive (TP) Evaluation Triad Criteria."
+    }
   },
   {
     "num": 85,
@@ -1102,7 +1774,15 @@
     },
     "answer": "B",
     "explanation": "A False Positive occurs under three circumstances: (1) Class mismatch; (2) Localization error ($\\text{IoU} < \\tau$ with any ground truth box of that class); (3) Duplicate detection (predicting a ground truth object that a higher-ranked prediction has already claimed).",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: False Positive (FP) Three Classification Rules",
+    "keyConcept": "False Positive occurs from class mismatch, low IoU (< threshold), or duplicate detection of same GT.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: False Positive (FP) Three Classification Rules.",
+      "B": "Correct. This precisely matches the lecture slides: When predicted class mismatches ground truth; OR $\\text{IoU} < \\tau$ with all ground truth boxes; OR it overlaps a ground truth box with $\\text{IoU} \\ge \\tau$ that was ALREADY matched to a higher-confidence prediction",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: False Positive (FP) Three Classification Rules.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: False Positive (FP) Three Classification Rules."
+    }
   },
   {
     "num": 86,
@@ -1115,7 +1795,15 @@
     },
     "answer": "A",
     "explanation": "Precision measures the fraction of reported detections that are correct: $\\text{TP} / (\\text{TP} + \\text{FP})$. Recall measures the fraction of actual ground-truth objects that were successfully detected: $\\text{TP} / (\\text{TP} + \\text{FN})$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Precision and Recall Fundamental Mathematical Definitions",
+    "keyConcept": "Precision = TP / (TP + FP) measures correctness; Recall = TP / (TP + FN) measures completeness.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: $\\text{Precision} = \\frac{\\text{TP}}{\\text{TP} + \\text{FP}}, \\quad \\text{Recall} = \\frac{\\text{TP}}{\\text{TP} + \\text{FN}}$",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Precision and Recall Fundamental Mathematical Definitions.",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Precision and Recall Fundamental Mathematical Definitions.",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: Precision and Recall Fundamental Mathematical Definitions."
+    }
   },
   {
     "num": 87,
@@ -1128,7 +1816,15 @@
     },
     "answer": "C",
     "explanation": "Total predictions $= \\text{TP} + \\text{FP} = 3 + 2 = 5$. Precision $= 3/5 = 0.60$ (60%). Total ground truth objects $= 4 \\implies \\text{FN} = 4 - \\text{TP} = 4 - 3 = 1$. Recall $= 3 / (3 + 1) = 3/4 = 0.75$ (75%).",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Precision & Recall Numerical Evaluation Calculation",
+    "keyConcept": "5 predictions on 4 GT with 3 TP and 2 FP yields Precision = 3/5 (60%) and Recall = 3/4 (75%).",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Precision & Recall Numerical Evaluation Calculation.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Precision & Recall Numerical Evaluation Calculation.",
+      "C": "Correct. This precisely matches the lecture slides: Precision = $\\frac{3}{3+2} = 0.60$ (60%), Recall = $\\frac{3}{3+1} = 0.75$ (75%)",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Precision & Recall Numerical Evaluation Calculation."
+    }
   },
   {
     "num": 88,
@@ -1141,7 +1837,15 @@
     },
     "answer": "D",
     "explanation": "To build the PR curve, all predictions for a class across the test dataset are sorted in descending order of confidence. As we step through the sorted list (effectively lowering the confidence threshold from 1.0 to 0.0), cumulative TPs and FPs are tracked to compute Precision and Recall pairs at every prediction rank.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Precision-Recall (PR) Curve Confidence Sweeps",
+    "keyConcept": "Sorting all detections by confidence and accumulating TPs/FPs traces the Precision-Recall curve.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Precision-Recall (PR) Curve Confidence Sweeps.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Precision-Recall (PR) Curve Confidence Sweeps.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Precision-Recall (PR) Curve Confidence Sweeps.",
+      "D": "Correct. This precisely matches the lecture slides: By gathering all predictions across all images, sorting them in descending order of confidence score, and computing cumulative True Positives, False Positives, Precision, and Recall at each rank"
+    }
   },
   {
     "num": 89,
@@ -1154,7 +1858,15 @@
     },
     "answer": "D",
     "explanation": "Real PR curves have jagged oscillations: a false positive lowers precision, while a subsequent true positive raises it. Precision interpolation sets the precision at recall $r$ to the maximum precision attained for any recall $\\tilde{r} \\ge r$: $p_{\\text{interp}}(r) = \\max_{\\tilde{r} \\ge r} p(\\tilde{r})$, converting the curve into a monotonic step function.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 10: Monotonic Step Precision Interpolation",
+    "keyConcept": "Interpolated precision takes maximum precision for any recall r' >= r to remove zigzag fluctuations.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Monotonic Step Precision Interpolation.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Monotonic Step Precision Interpolation.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Monotonic Step Precision Interpolation.",
+      "D": "Correct. This precisely matches the lecture slides: $p_{\\text{interp}}(r) = \\max_{\\tilde{r} \\ge r} p(\\tilde{r})$; it takes the maximum precision observed at any recall level $\\tilde{r} \\ge r$, eliminating local 'wiggles' and zig-zags caused by individual false positives"
+    }
   },
   {
     "num": 90,
@@ -1167,7 +1879,15 @@
     },
     "answer": "B",
     "explanation": "In VOC 2007, AP is computed by sampling the interpolated precision at 11 equally spaced recall points $\\{0.0, 0.1, 0.2, \\dots, 1.0\\}$ and taking their arithmetic mean: $\\text{AP}_{11} = \\frac{1}{11} \\sum_{r} p_{\\text{interp}}(r)$.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 10: PASCAL VOC 2007 11-Point Interpolated AP",
+    "keyConcept": "VOC 2007 11-point AP samples interpolated precision across 11 recall points {0.0, 0.1, ..., 1.0}.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: PASCAL VOC 2007 11-Point Interpolated AP.",
+      "B": "Correct. This precisely matches the lecture slides: $\\text{AP}_{11} = \\frac{1}{11} \\sum_{r \\in \\{0.0, 0.1, 0.2, \\dots, 1.0\\}} p_{\\text{interp}}(r)$",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: PASCAL VOC 2007 11-Point Interpolated AP.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: PASCAL VOC 2007 11-Point Interpolated AP."
+    }
   },
   {
     "num": 91,
@@ -1180,7 +1900,15 @@
     },
     "answer": "C",
     "explanation": "Modern benchmarks replaced 11-point sampling with the exact Area Under the Curve (AUC) of the interpolated PR curve. By summing rectangular areas between consecutive distinct recall levels $(r_k - r_{k-1}) \\cdot p_{\\text{interp}}(r_k)$, it measures the complete continuous area.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 10: Continuous Area-Under-Curve Average Precision",
+    "keyConcept": "Continuous AP computes exact Area Under Curve by summing rectangular areas between recall steps.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Continuous Area-Under-Curve Average Precision.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Continuous Area-Under-Curve Average Precision.",
+      "C": "Correct. This precisely matches the lecture slides: By integrating the exact area under the interpolated PR curve: $\\text{AP} = \\sum_{k=1}^N (r_k - r_{k-1}) \\cdot p_{\\text{interp}}(r_k)$ across all recall change points",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Continuous Area-Under-Curve Average Precision."
+    }
   },
   {
     "num": 92,
@@ -1193,7 +1921,15 @@
     },
     "answer": "B",
     "explanation": "Average Precision (AP) is computed per category. Mean Average Precision (mAP) averages the AP values across all $K$ target classes in the evaluation dataset: $\\text{mAP} = \\frac{1}{K} \\sum_{k=1}^K \\text{AP}_k$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Mean Average Precision (mAP) Category Mean",
+    "keyConcept": "Mean Average Precision (mAP) is the arithmetic mean of AP scores across all K classes in dataset.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Mean Average Precision (mAP) Category Mean.",
+      "B": "Correct. This precisely matches the lecture slides: The mean of the Average Precision (AP) scores across all $K$ object categories in the dataset: $\\text{mAP} = \\frac{1}{K} \\sum_{k=1}^K \\text{AP}_k$",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Mean Average Precision (mAP) Category Mean.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Mean Average Precision (mAP) Category Mean."
+    }
   },
   {
     "num": 93,
@@ -1206,7 +1942,15 @@
     },
     "answer": "B",
     "explanation": "$\\text{mAP}_{50}$ tests whether the detector roughly identifies the object location (IoU $\\ge 0.50$). $\\text{mAP}_{75}$ sets a demanding standard of IoU $\\ge 0.75$, requiring tight, high-precision boundary localization, which is critical for autonomous vehicle path planning.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: mAP50 Loose vs mAP75 Tight Localization",
+    "keyConcept": "mAP50 tests loose localization (IoU >= 0.50); mAP75 strictly requires tight localization (IoU >= 0.75).",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: mAP50 Loose vs mAP75 Tight Localization.",
+      "B": "Correct. This precisely matches the lecture slides: $\\text{mAP}_{50}$ uses an overlap threshold of $\\text{IoU} \\ge 0.50$ (measuring rough localization); $\\text{mAP}_{75}$ requires a strict threshold of $\\text{IoU} \\ge 0.75$, heavily penalizing imprecise bounding box borders",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: mAP50 Loose vs mAP75 Tight Localization.",
+      "D": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: mAP50 Loose vs mAP75 Tight Localization."
+    }
   },
   {
     "num": 94,
@@ -1219,7 +1963,15 @@
     },
     "answer": "A",
     "explanation": "COCO primary AP computes mAP across 10 IoU thresholds: $\\{0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95\\}$ and takes their mean. This metric rewards detectors that excel at both high-confidence recognition and extremely precise geometric localization.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: COCO Primary Metric (mAP 50:95 10-Threshold Mean)",
+    "keyConcept": "COCO mAP50:95 averages mAP across 10 IoU thresholds from 0.50 to 0.95 with step 0.05.",
+    "optionContext": {
+      "A": "Correct. This precisely matches the lecture slides: By evaluating mAP at 10 discrete IoU thresholds from $0.50$ to $0.95$ with step $0.05$ and averaging them: $\\text{mAP}_{50:95} = \\frac{1}{10} \\sum_{\\tau \\in \\{0.50, 0.55, \\dots, 0.95\\}} \\text{mAP}_\\tau$",
+      "B": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: COCO Primary Metric (mAP 50:95 10-Threshold Mean).",
+      "C": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: COCO Primary Metric (mAP 50:95 10-Threshold Mean).",
+      "D": "Incorrect option. In contrast to the correct answer (A), this does not satisfy the principles taught in Lecture 10: COCO Primary Metric (mAP 50:95 10-Threshold Mean)."
+    }
   },
   {
     "num": 95,
@@ -1232,7 +1984,15 @@
     },
     "answer": "D",
     "explanation": "COCO defines scale splits by bounding box area (width $\\times$ height): Small ($\text{AP}_S$): $\\text{area} < 32^2 = 1,024\\text{ px}^2$; Medium ($\text{AP}_M$): $1,024 \\le \\text{area} \\le 9,216\\text{ px}^2$ ($32^2$ to $96^2$); Large ($\text{AP}_L$): $\\text{area} > 96^2 = 9,216\\text{ px}^2$.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: COCO Area Scale Splits (APS, APM, APL)",
+    "keyConcept": "COCO scale splits: Small (< 32^2 px^2), Medium (32^2 to 96^2 px^2), Large (> 96^2 px^2).",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: COCO Area Scale Splits (APS, APM, APL).",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: COCO Area Scale Splits (APS, APM, APL).",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: COCO Area Scale Splits (APS, APM, APL).",
+      "D": "Correct. This precisely matches the lecture slides: $\\text{AP}_S$: $< 32^2$ ($1,024\\text{ px}^2$); $\\text{AP}_M$: $32^2$ to $96^2$ ($1,024 - 9,216\\text{ px}^2$); $\\text{AP}_L$: $> 96^2$ ($> 9,216\\text{ px}^2$)"
+    }
   },
   {
     "num": 96,
@@ -1245,7 +2005,15 @@
     },
     "answer": "D",
     "explanation": "Average Recall is the mean value of the function $\\text{recall}(o)$ over the threshold domain $o \\in [0.5, 1.0]$. By calculus definition, the mean value of a function over $[a, b]$ is $\\frac{1}{b-a} \\int_a^b f(x) dx$. Here $\\frac{1}{1.0 - 0.5} = \\frac{1}{0.5} = 2$, giving $\\text{AR} = 2 \\int_{0.5}^{1.0} \\text{recall}(o) do$.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 10: Average Recall (AR) Integral Formula & Factor of 2",
+    "keyConcept": "Average Recall AR = 2 * int_{0.5}^{1.0} recall(o) do; dividing by interval 0.5 creates factor of 2.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Average Recall (AR) Integral Formula & Factor of 2.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Average Recall (AR) Integral Formula & Factor of 2.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: Average Recall (AR) Integral Formula & Factor of 2.",
+      "D": "Correct. This precisely matches the lecture slides: AR evaluates recall across IoU overlap thresholds $o \\in [0.5, 1.0]$. The interval width is $1.0 - 0.5 = 0.5$. Dividing by the interval length ($\\frac{1}{0.5} = 2$) normalizes the average recall integral to the range $[0, 1]$"
+    }
   },
   {
     "num": 97,
@@ -1258,7 +2026,15 @@
     },
     "answer": "C",
     "explanation": "mAP measures confidence calibration and correctness by heavily penalizing false positives. Average Recall (AR) measures completeness: it evaluates whether candidate proposals cover ground-truth objects across various IoU thresholds, providing an essential safety coverage metric.",
-    "tier": "Tier 2 — High Probability"
+    "tier": "Tier 2 — High Probability",
+    "lectureReference": "Lecture 10: mAP (Precision/Correctness) vs AR (Recall/Safety)",
+    "keyConcept": "mAP emphasizes precision and correctness; Average Recall (AR) emphasizes safety coverage.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: mAP (Precision/Correctness) vs AR (Recall/Safety).",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: mAP (Precision/Correctness) vs AR (Recall/Safety).",
+      "C": "Correct. This precisely matches the lecture slides: mAP emphasizes Precision (punishing False Positives and unreliable confidence scores); AR emphasizes Recall (measuring what fraction of real objects the detector successfully finds regardless of False Positives)",
+      "D": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: mAP (Precision/Correctness) vs AR (Recall/Safety)."
+    }
   },
   {
     "num": 98,
@@ -1271,7 +2047,15 @@
     },
     "answer": "D",
     "explanation": "COCO restricts the maximum allowed detections per image: $\\text{AR}_1$ measures recall with only 1 top detection per image; $\\text{AR}_{10}$ allows up to 10; $\\text{AR}_{100}$ allows up to 100. $\\text{AR}_{100}$ represents the detector's maximum achievable recall capacity.",
-    "tier": "Tier 3 — Moderate-High"
+    "tier": "Tier 3 — Moderate-High",
+    "lectureReference": "Lecture 10: AR1, AR10, AR100 Image Detections Capacity",
+    "keyConcept": "AR1, AR10, AR100 evaluate recall when detector is capped at 1, 10, or 100 detections per image.",
+    "optionContext": {
+      "A": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: AR1, AR10, AR100 Image Detections Capacity.",
+      "B": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: AR1, AR10, AR100 Image Detections Capacity.",
+      "C": "Incorrect option. In contrast to the correct answer (D), this does not satisfy the principles taught in Lecture 10: AR1, AR10, AR100 Image Detections Capacity.",
+      "D": "Correct. This precisely matches the lecture slides: Average Recall when the detector is restricted to returning at most 1, 10, or 100 detections per image"
+    }
   },
   {
     "num": 99,
@@ -1284,7 +2068,15 @@
     },
     "answer": "C",
     "explanation": "In safety-critical autonomy, asymmetry of risk dictates that missing a real pedestrian or obstacle (False Negative) leads to collisions and loss of life. A False Positive produces ghost braking or cautious deceleration ('phantom braking'), which while uncomfortable, does not breach the fundamental fail-safe envelope.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Asymmetry of Risk: False Negatives vs False Positives",
+    "keyConcept": "Missing an obstacle (FN) causes fatal collisions; false alarms (FP) cause ghost braking.",
+    "optionContext": {
+      "A": "Incorrect. This describes full autonomous vehicle sensor hardware, not the internal CNN detector grammar.",
+      "B": "Incorrect option. In contrast to the correct answer (C), this does not satisfy the principles taught in Lecture 10: Asymmetry of Risk: False Negatives vs False Positives.",
+      "C": "Correct. This precisely matches the lecture slides: A False Negative means failing to detect a real hazard (e.g., pedestrian or vehicle), leaving downstream planning with no warning and risking catastrophic collisions; a False Positive causes unnecessary braking ('phantom braking'), which is inconvenient but far less deadly than an unmitigated collision",
+      "D": "Incorrect humorous distractor. Safety systems use multi-sensor fusion and tracking filters."
+    }
   },
   {
     "num": 100,
@@ -1297,6 +2089,14 @@
     },
     "answer": "B",
     "explanation": "Autonomous vehicles never trigger emergency braking based on a raw single-frame 2D camera detection. 2D camera bounding boxes are fused with 3D LiDAR geometry and Radar velocity returns. Furthermore, temporal tracking filters (Kalman/particle filters) require persistence across multiple consecutive frames, effectively rejecting transient false alarms.",
-    "tier": "Tier 1 — Highest Probability"
+    "tier": "Tier 1 — Highest Probability",
+    "lectureReference": "Lecture 10: Multi-Sensor Fusion & Temporal Rejecting Ghost FPs",
+    "keyConcept": "Multi-sensor fusion (LiDAR/Radar) and temporal Kalman tracking filter out single-frame camera ghost FPs.",
+    "optionContext": {
+      "A": "Incorrect. Setting confidence threshold to 0.999 causes massive False Negatives (missed hazards).",
+      "B": "Correct. This precisely matches the lecture slides: By multi-sensor fusion (cross-verifying 2D camera boxes with 3D LiDAR point clouds and Radar Doppler velocity returns) and multi-frame temporal tracking (e.g., Extended Kalman Filters) to discard single-frame transient ghost detections",
+      "C": "Incorrect option. In contrast to the correct answer (B), this does not satisfy the principles taught in Lecture 10: Multi-Sensor Fusion & Temporal Rejecting Ghost FPs.",
+      "D": "Incorrect. GPS waypoints provide route planning but cannot detect dynamic obstacles."
+    }
   }
 ]

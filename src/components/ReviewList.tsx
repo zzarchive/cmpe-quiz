@@ -89,6 +89,22 @@ export function ReviewList({ answers }: ReviewListProps) {
               )}
             </div>
             <p className="review-explanation">{a.question.explanation}</p>
+            {(a.question.lectureReference || a.question.keyConcept) && (
+              <div className="review-context-card">
+                {a.question.lectureReference && (
+                  <div className="context-item">
+                    <span className="context-item-label">📌 Reference:</span>
+                    <span className="context-item-val">{a.question.lectureReference}</span>
+                  </div>
+                )}
+                {a.question.keyConcept && (
+                  <div className="context-item">
+                    <span className="context-item-label">💡 Key Takeaway:</span>
+                    <span className="context-item-val">{a.question.keyConcept}</span>
+                  </div>
+                )}
+              </div>
+            )}
             <span className="review-time">⏱ {formatTime(a.timeSpent)}</span>
           </div>
         ))}
