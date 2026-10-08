@@ -103,6 +103,27 @@ export function QuizScreen({
             <span className="feedback-time">⏱ {formatTime(prevAnswer.timeSpent)}</span>
           </div>
           <p className="feedback-explanation">{q.explanation}</p>
+          {q.optionContext && Object.keys(q.optionContext).length > 0 && (
+            <div className="feedback-breakdown">
+              <div className="breakdown-title">💡 Why each choice:</div>
+              <div className="breakdown-list">
+                {(['A', 'B', 'C', 'D'] as const).map((letter) => {
+                  const ctx = q.optionContext?.[letter];
+                  if (!ctx) return null;
+                  const isOptCorrect = letter === q.answer;
+                  return (
+                    <div key={letter} className={`breakdown-row ${isOptCorrect ? 'breakdown-row-correct' : 'breakdown-row-distractor'}`}>
+                      <span className="breakdown-tag">{letter}</span>
+                      <div className="breakdown-info">
+                        <span className="breakdown-choice-text">{q.options[letter]}</span>
+                        <span className="breakdown-reason">{ctx}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           {(q.lectureReference || q.keyConcept) && (
             <div className="feedback-context-card">
               {q.lectureReference && (

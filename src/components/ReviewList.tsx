@@ -89,6 +89,27 @@ export function ReviewList({ answers }: ReviewListProps) {
               )}
             </div>
             <p className="review-explanation">{a.question.explanation}</p>
+            {a.question.optionContext && Object.keys(a.question.optionContext).length > 0 && (
+              <div className="review-breakdown">
+                <div className="breakdown-title">💡 Why each choice:</div>
+                <div className="breakdown-list">
+                  {(['A', 'B', 'C', 'D'] as const).map((letter) => {
+                    const ctx = a.question.optionContext?.[letter];
+                    if (!ctx) return null;
+                    const isOptCorrect = letter === a.question.answer;
+                    return (
+                      <div key={letter} className={`breakdown-row ${isOptCorrect ? 'breakdown-row-correct' : 'breakdown-row-distractor'}`}>
+                        <span className="breakdown-tag">{letter}</span>
+                        <div className="breakdown-info">
+                          <span className="breakdown-choice-text">{a.question.options[letter]}</span>
+                          <span className="breakdown-reason">{ctx}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             {(a.question.lectureReference || a.question.keyConcept) && (
               <div className="review-context-card">
                 {a.question.lectureReference && (

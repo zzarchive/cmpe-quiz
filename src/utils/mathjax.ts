@@ -1,6 +1,13 @@
 export function typesetMath(container?: HTMLElement | null) {
   const mj = window.MathJax;
-  if (!mj?.typesetPromise) return;
+  if (!mj?.typesetPromise) {
+    const handler = () => {
+      document.removeEventListener('mathjax-ready', handler);
+      typesetMath(container);
+    };
+    document.addEventListener('mathjax-ready', handler);
+    return;
+  }
 
   try {
     if (container) {
