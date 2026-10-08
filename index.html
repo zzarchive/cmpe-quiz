@@ -1,129 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMPE Exam Quiz</title>
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$$','$$'],['$','$'],['\\(','\\)']],
-    displayMath: [['\\[','\\]']]
-  },
-  startup: {
-    ready: () => {
-      MathJax.startup.defaultReady();
-      window.mathJaxReady = true;
-    }
-  }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<link rel="stylesheet" href="css/styles.css?v=2">
-</head>
-<body>
-<div class="container">
-  <!-- Header -->
-  <div class="header">
-    <h1 id="header-title">📝 Loading…</h1>
-    <div class="header-right">
-      <div class="timer-display" id="timer-display" style="display:none">
-        <span id="total-timer">00:00</span>
-        <span class="q-timer" id="q-timer">Q: 00:00</span>
-      </div>
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
-    </div>
-  </div>
-
-  <!-- Screen 1: Course Selection (rendered dynamically from config) -->
-  <div id="screen-course" class="screen active">
-    <div class="card course-select fade-in">
-      <h2></h2>
-      <p></p>
-      <div id="course-list"></div>
-    </div>
-  </div>
-
-  <!-- Screen 2: Mode Selection (rendered dynamically) -->
-  <div id="screen-mode" class="screen">
-    <div class="card mode-select fade-in">
-      <h2 id="mode-title"></h2>
-      <p class="subtitle" id="mode-subtitle"></p>
-      <div id="mode-buttons"></div>
-      <button class="mode-btn secondary" onclick="openStudyGuide()" style="margin-top:8px;border-color:var(--accent);color:var(--accent)">📖 Study Guide</button>
-      <button class="back-link" onclick="showScreen('screen-course')">← Back to course selection</button>
-    </div>
-  </div>
-
-  <!-- Screen 3: Quiz -->
-  <div id="screen-quiz" class="screen">
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-    <div class="progress-text">
-      <span id="progress-label">Question 1 of 100</span>
-      <span id="score-label">Score: 0/0</span>
-      <button class="formula-btn" id="formula-btn" onclick="openFormulaSheet()" title="Open formula sheet">📐</button>
-      <button class="exit-btn" onclick="exitQuiz()" title="Exit quiz and view results">✕ Exit</button>
-    </div>
-    <div class="card fade-in" id="question-card">
-      <span class="q-tier" id="q-tier"></span>
-      <div class="q-number" id="q-number"></div>
-      <div class="q-text" id="q-text"></div>
-      <div id="options-container"></div>
-      <div class="feedback" id="feedback">
-        <div class="fb-title" id="fb-title"></div>
-        <div class="fb-explanation" id="fb-explanation"></div>
-      </div>
-      <div class="nav-buttons">
-        <button class="prev-btn" id="prev-btn" onclick="prevQuestion()">← Previous</button>
-        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 4: Summary -->
-  <div id="screen-summary" class="screen">
-    <div class="card summary fade-in">
-      <h2>Quiz Complete! 🎉</h2>
-      <div class="score-display" id="final-score"></div>
-      <div class="score-pct" id="final-pct"></div>
-      <div class="score-bar-container">
-        <div class="score-bar" id="score-bar"></div>
-      </div>
-      <div class="summary-actions">
-        <button class="restart-btn" onclick="restartQuiz()">🔄 Restart</button>
-        <button class="switch-btn" onclick="showScreen('screen-course')">📚 Switch Course</button>
-      </div>
-      <div class="review-filter">
-        <button class="filter-btn active" data-filter="all" onclick="filterReview('all', this)">All</button>
-        <button class="filter-btn" data-filter="wrong" onclick="filterReview('wrong', this)">❌ Wrong Only</button>
-        <button class="filter-btn" data-filter="correct" onclick="filterReview('correct', this)">✅ Correct Only</button>
-      </div>
-      <div class="review-list" id="review-list"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Study Guide Modal -->
-<div class="sg-overlay" id="sg-overlay" onclick="if(event.target===this)closeStudyGuide()">
-  <div class="sg-modal" id="sg-modal">
-    <button class="sg-close" onclick="closeStudyGuide()" aria-label="Close study guide">✕</button>
-    <div id="sg-content"></div>
-    <button class="modal-close-bottom" onclick="closeStudyGuide()">Close Study Guide</button>
-  </div>
-</div>
-
-<!-- Formula Sheet Modal -->
-<div class="fs-overlay" id="fs-overlay" onclick="if(event.target===this)closeFormulaSheet()">
-  <div class="fs-modal" id="fs-modal">
-    <button class="fs-close" onclick="closeFormulaSheet()" aria-label="Close formula sheet">✕</button>
-    <div id="fs-content"></div>
-    <button class="modal-close-bottom" onclick="closeFormulaSheet()">Close Formula Sheet</button>
-  </div>
-</div>
-
-<script src="js/app.js?v=2"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>CMPE Exam Prep</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>" />
+    <script>
+      (function() {
+        var t = localStorage.getItem('quiz-theme');
+        if (t === 'dark' || t === null) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

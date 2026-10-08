@@ -1,3 +1,6 @@
+node_modules
+dist
 .DS_Store
 *.png
-.DS_Store
+*.tsbuildinfo
+.vscode/

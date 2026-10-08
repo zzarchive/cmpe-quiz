@@ -1,59 +1,51 @@
-# CMPE Exam Quiz App
+# CMPE Exam Quiz App v2
 
-A single-page quiz application for practicing **CMPE 260 (Reinforcement Learning)** and **CMPE 256 (Recommender Systems)** exam questions.
+A modern, config-driven single-page quiz application for practicing CMPE graduate course exam questions:
+- **CMPE 249: Intelligent Autonomous Systems** (Basic 2D Object Detection · Lectures 8–10)
+- **CMPE 260: Reinforcement Learning** (Modules 9–17 · TRPO, PPO, DDPG, SAC, A3C)
+- **CMPE 256: Recommender Systems** (CF, MF, Deep Learning, Fairness, Bandits)
+
+Built with **React 19 + TypeScript + Vite**.
+
+## Architecture
+
+```
+src/
+├── components/     # UI components (Header, CourseSelection, ModeSelection, QuizScreen, etc.)
+├── hooks/          # Custom React hooks (useConfig, useQuestions, useQuiz, useTimer, useTheme)
+├── types/          # TypeScript type definitions
+├── utils/          # Utility functions (themes, markdown, shuffle, formatTime)
+├── styles/         # CSS styles
+├── App.tsx         # Main app component
+└── main.tsx        # Entry point
+data/               # JSON config + question/formula banks
+guides/             # Markdown study guides per course
+```
 
 ## Features
 
-- **200 questions** — 100 per course, embedded directly in the HTML
-- **Three quiz modes** — All 100 (shuffled), Quick 25, Quick 10
-- **Instant feedback** — correct/wrong highlighting with explanations
-- **LaTeX rendering** — equations rendered via MathJax CDN
-- **Progress tracking** — live score and progress bar
-- **End-of-quiz summary** — score breakdown, filterable review of all answers
-- **Dark/light mode** — toggle with persistent preference
-- **Mobile-friendly** — responsive design for phone screens
-- **Zero dependencies** — single HTML file (only external: MathJax CDN)
+- **300+ total questions** — 100 questions per course, loaded dynamically from JSON
+- **Interactive Quiz Modes** — Quick 10, Quick 25, Quick 50, All Questions, Custom Random
+- **Tier-based filtering** — Practice by exam probability (Tier 1 / Tier 2 / Tier 3)
+- **Instant feedback** — Correct/wrong color highlighting with detailed mathematical & conceptual explanations
+- **LaTeX MathJax Rendering** — Full math equation support for loss formulas, tensor dimensions, and coordinate decoding
+- **Formula sheets modal** — Quick access to key formulas (📐)
+- **Study guides modal** — Built-in markdown notes and summaries (📖)
+- **Dark/Light theme** — Persistent preference, respecting system settings
+- **Timer tracking** — Real-time per-question and total elapsed timer
+- **End-of-quiz review** — Filterable by all, correct, or incorrect answers
+- **Mobile-friendly** — Responsive touch-friendly layout with viewport-fit cover
 
-## Deploying to GitHub Pages
-
-### Option 1: From this repo
-
-1. Push the `plans/quiz/` directory to your GitHub repository
-2. Go to **Settings → Pages**
-3. Under **Source**, select the branch (e.g., `main`) and folder (`/plans/quiz`)
-4. Click **Save**
-5. Your quiz will be live at `https://<username>.github.io/<repo>/plans/quiz/`
-
-### Option 2: Standalone deployment
-
-1. Create a new GitHub repository (e.g., `cmpe-quiz`)
-2. Copy `index.html` to the root of the repository
-3. Push to GitHub
-4. Go to **Settings → Pages → Source → Deploy from branch → `main` / `/ (root)`**
-5. Your quiz will be live at `https://<username>.github.io/cmpe-quiz/`
-
-### Option 3: Open locally
-
-Simply open `index.html` in any modern browser — it works offline (except LaTeX rendering requires internet for MathJax CDN).
-
-## Rebuilding the Question Data
-
-If you update the source question files, you can regenerate the HTML:
+## Development
 
 ```bash
-# 1. Parse questions from markdown to JSON
-python3 parse_questions.py > questions.json
-
-# 2. Build the HTML with embedded data
-python3 build_html.py
+npm install
+npm run dev       # dev server at http://localhost:5173
+npm run build     # production build to dist/
+npm run preview   # preview production build
 ```
 
-### Source files
-- `../../plans/CMPE260_TOP100_Predicted_Exam_Questions.md`
-- `../../plans/CMPE256_TOP100_Predicted_Exam_Questions.md`
+## Deployment to GitHub Pages
 
-## Tech Stack
-
-- **HTML/CSS/JS** — vanilla, no frameworks
-- **MathJax 3** — CDN-loaded for LaTeX `$$...$$` rendering
-- **LocalStorage** — persists dark/light mode preference
+This repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically builds and deploys the app to GitHub Pages upon every push to `main`.
+Additionally, the static production build can be served directly from the `gh-pages` branch.

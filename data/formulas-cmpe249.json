@@ -1,0 +1,97 @@
+[
+  {
+    "module": "Lecture 8 — Two-Stage Detectors & Foundations",
+    "formulas": [
+      {
+        "name": "Fast R-CNN Multi-Task Loss",
+        "latex": "$$L(p, u, t^u, v) = L_{\\text{cls}}(p, u) + \\lambda [u \\ge 1] L_{\\text{loc}}(t^u, v)$$"
+      },
+      {
+        "name": "Smooth L1 Loss",
+        "latex": "$$\\text{smooth}_{L_1}(x) = \\begin{cases} 0.5 x^2 & \\text{if } |x| < 1 \\\\ |x| - 0.5 & \\text{otherwise} \\end{cases}$$"
+      },
+      {
+        "name": "RPN Bounding Box Parameterization",
+        "latex": "$$t_x = \\frac{x - x_a}{w_a}, \\quad t_y = \\frac{y - y_a}{h_a}, \\quad t_w = \\ln\\left(\\frac{w}{w_a}\\right), \\quad t_h = \\ln\\left(\\frac{h}{h_a}\\right)$$"
+      },
+      {
+        "name": "SPP Fixed-Length Output Dimension",
+        "latex": "$$\\text{Dim} = \\left( \\sum_{m=1}^M k_m^2 \\right) \\times C = (16 + 4 + 1) \\times C = 21 \\cdot C$$"
+      },
+      {
+        "name": "Faster R-CNN Anchor Grid Generation",
+        "latex": "$$N_{\\text{anchors}} = \\left\\lfloor \\frac{W}{16} \\right\\rfloor \\times \\left\\lfloor \\frac{H}{16} \\right\\rfloor \\times 9$$"
+      }
+    ]
+  },
+  {
+    "module": "Lecture 9 — Single-Stage Detectors & YOLO Evolution",
+    "formulas": [
+      {
+        "name": "YOLOv1 Output Tensor Dimensions",
+        "latex": "$$\\text{Shape} = S \\times S \\times (B \\cdot 5 + C) = 7 \\times 7 \\times (2 \\cdot 5 + 20) = 7 \\times 7 \\times 30$$"
+      },
+      {
+        "name": "YOLOv2 K-Means Clustering Distance",
+        "latex": "$$d(\\text{box}, \\text{centroid}) = 1 - \\text{IoU}(\\text{box}, \\text{centroid})$$"
+      },
+      {
+        "name": "YOLOv2 Direct Location Prediction",
+        "latex": "$$b_x = \\sigma(t_x) + c_x, \\quad b_y = \\sigma(t_y) + c_y, \\quad b_w = p_w e^{t_w}, \\quad b_h = p_h e^{t_h}$$"
+      },
+      {
+        "name": "YOLOv3 Multi-Scale Output Channels",
+        "latex": "$$\\text{Channels} = 3 \\times (4 + 1 + C_{\\text{classes}}) = 3 \\times (4 + 1 + 80) = 255$$"
+      },
+      {
+        "name": "Mish Activation Function",
+        "latex": "$$\\text{Mish}(x) = x \\tanh(\\ln(1 + e^x)) = x \\tanh(\\text{softplus}(x))$$"
+      },
+      {
+        "name": "Class Label Smoothing",
+        "latex": "$$y_k^{\\text{smooth}} = y_k (1 - \\epsilon) + \\frac{\\epsilon}{K}$$"
+      }
+    ]
+  },
+  {
+    "module": "Lecture 10 — Modern Detector Anatomy, Losses & Metrics",
+    "formulas": [
+      {
+        "name": "YOLOv5 Grid Sensitivity Bounded Box Decoding",
+        "latex": "$$b_x = (2\\sigma(t_x) - 0.5) + c_x, \\quad b_w = p_w \\cdot (2\\sigma(t_w))^2$$"
+      },
+      {
+        "name": "YOLOv5 Anchor Matching Ratio Rule",
+        "latex": "$$r_w = \\max\\left(\\frac{w_{\\text{gt}}}{w_a}, \\frac{w_a}{w_{\\text{gt}}}\\right), \\quad \\max(r_w, r_h) < 4.0$$"
+      },
+      {
+        "name": "Generalized IoU (GIoU) Loss",
+        "latex": "$$L_{\\text{GIoU}} = 1 - \\left( \\text{IoU} - \\frac{|C \\setminus (A \\cup B)|}{|C|} \\right)$$"
+      },
+      {
+        "name": "Distance-IoU (DIoU) Loss",
+        "latex": "$$L_{\\text{DIoU}} = 1 - \\text{IoU} + \\frac{\\rho^2(b, b^{\\text{gt}})}{c^2}$$"
+      },
+      {
+        "name": "Complete IoU (CIoU) Loss",
+        "latex": "$$L_{\\text{CIoU}} = 1 - \\text{IoU} + \\frac{\\rho^2(b, b^{\\text{gt}})}{c^2} + \\alpha v, \\quad v = \\frac{4}{\\pi^2}\\left(\\arctan\\frac{w^{\\text{gt}}}{h^{\\text{gt}}} - \\arctan\\frac{w}{h}\\right)^2$$"
+      },
+      {
+        "name": "Soft-NMS Gaussian Confidence Decay",
+        "latex": "$$s_i = s_i \\exp\\left(-\\frac{\\text{IoU}(M, b_i)^2}{\\sigma}\\right)$$"
+      },
+      {
+        "name": "Precision and Recall",
+        "latex": "$$\\text{Precision} = \\frac{\\text{TP}}{\\text{TP} + \\text{FP}}, \\quad \\text{Recall} = \\frac{\\text{TP}}{\\text{TP} + \\text{FN}}$$"
+      },
+      {
+        "name": "COCO Primary Metric (mAP 50:95)",
+        "latex": "$$\\text{mAP}_{50:95} = \\frac{1}{10} \\sum_{\\tau \\in \\{0.50, 0.55, \\dots, 0.95\\}} \\text{mAP}_\\tau$$"
+      },
+      {
+        "name": "Average Recall (AR)",
+        "latex": "$$\\text{AR} = 2 \\int_{0.5}^{1.0} \\text{recall}(o) \\, do$$"
+      }
+    ]
+  }
+]
