@@ -1,14 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import type { FormulaSection } from '../types';
+import { typesetMath } from '../utils/mathjax';
 
 interface FormulaSheetProps {
   formulas: FormulaSection[];
   onClose: () => void;
 }
 
-import { typesetMath } from '../utils/mathjax';
-
-export function FormulaSheet({ formulas, onClose }: FormulaSheetProps) {
+export const FormulaSheet = memo(function FormulaSheet({ formulas, onClose }: FormulaSheetProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       typesetMath();
@@ -43,4 +42,4 @@ export function FormulaSheet({ formulas, onClose }: FormulaSheetProps) {
       </div>
     </div>
   );
-}
+});

@@ -1,17 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import type { StudyGuide as StudyGuideType } from '../types';
 import { renderMarkdown } from '../utils/markdown';
+import { typesetMath } from '../utils/mathjax';
 
 interface StudyGuideProps {
   guides: StudyGuideType[];
   onClose: () => void;
 }
 
-function typesetMath() {
-  window.MathJax?.typesetPromise?.().catch(() => {});
-}
+const MathMarkdownViewer = memo(function MathMarkdownViewer({ html }: { html: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-export function StudyGuide({ guides, onClose }: StudyGuideProps) {
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.innerHTML = html;
+      typesetMath(containerRef.current);
+    }
+  }, [html]);
+
+  return <div ref={containerRef} className="sg-module-content" />;
+});
+
+export const StudyGuide = memo(function StudyGuide({ guides, onClose }: StudyGuideProps) {
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +35,7 @@ export function StudyGuide({ guides, onClose }: StudyGuideProps) {
       if (!resp.ok) throw new Error(`Failed to load guide`);
       const text = await resp.text();
       const html = file.endsWith('.md') ? renderMarkdown(text) : text;
-      setContent(`<div class="sg-module-content">${html}</div>`);
+      setContent(html);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -38,10 +48,6 @@ export function StudyGuide({ guides, onClose }: StudyGuideProps) {
     setError(null);
     setLoading(false);
   }, []);
-
-  useEffect(() => {
-    typesetMath();
-  }, [content]);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -75,7 +81,7 @@ export function StudyGuide({ guides, onClose }: StudyGuideProps) {
         {content && (
           <div className="sg-content">
             <button className="sg-back" onClick={showModules}>← Back to modules</button>
-            <div dangerouslySetInnerHTML={{ __html: content }} />
+            <MathMarkdownViewer html={content} />
           </div>
         )}
 
@@ -83,4 +89,4 @@ export function StudyGuide({ guides, onClose }: StudyGuideProps) {
       </div>
     </div>
   );
-}
+});

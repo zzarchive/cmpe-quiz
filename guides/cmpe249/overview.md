@@ -12,7 +12,7 @@ This master guide covers the essential theory, tensor architectures, loss functi
 | **R-CNN** | Selective Search (~2k) | ❌ No | 4,096-d feature $\to$ SVM + Ridge | ~47s/img; crops warped to $227\times 227$; decoupled training |
 | **SPP-Net** | Selective Search | ✅ Yes | Spatial Pyramid Bins ($21 \cdot C$) | Conv ran once on full image; fixed-bin spatial pooling |
 | **Fast R-CNN** | Selective Search | ✅ Yes | $7\times 7$ RoIPool $\to$ Sibling FC Heads | Multi-task loss (Log loss + Smooth $L_1$); end-to-end backprop |
-| **Faster R-CNN** | RPN ($k=9$ anchors) | ✅ Yes | RoIPool/RoIAlign $\to$ FC Heads | RPN shares conv backbone; $\sim 17.1\text{k}$ anchors $\to 300$ RoIs |
+| **Faster R-CNN** | RPN ($k=9$ anchors) | ✅ Yes | RoIPool/RoIAlign $\to$ FC Heads | RPN shares conv backbone; ~17.1k anchors $\to 300$ RoIs |
 | **YOLOv1** | $S\times S$ dense grid | ✅ Yes | $7\times 7\times (2\cdot 5 + 20) = 30$ | Direct single-stage regression; struggles on grouped small objects |
 | **YOLOv2** | Anchor priors (k-means) | ✅ Yes | $13\times 13\times (5\cdot (5+20))$ | $d = 1 - \text{IoU}$; direct location prediction; passthrough layer |
 | **YOLOv3** | Darknet-53 + FPN Neck | ✅ Yes | 3 scales: P3/P4/P5 $\times 255$ | Multi-scale detection; independent BCE; 10,647 candidate boxes |

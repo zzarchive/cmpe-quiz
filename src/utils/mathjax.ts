@@ -1,3 +1,5 @@
+let typesetChain: Promise<any> = Promise.resolve();
+
 export function typesetMath(container?: HTMLElement | null) {
   const mj = window.MathJax;
   if (!mj?.typesetPromise) {
@@ -9,15 +11,23 @@ export function typesetMath(container?: HTMLElement | null) {
     return;
   }
 
-  try {
-    if (container) {
-      mj.typesetClear?.([container]);
-      mj.typesetPromise([container]).catch(() => {});
-    } else {
-      mj.typesetClear?.();
-      mj.typesetPromise().catch(() => {});
-    }
-  } catch (e) {
-    console.warn('MathJax typesetting error:', e);
-  }
+  const typesetPromise = mj.typesetPromise;
+  const typesetClear = mj.typesetClear;
+  typesetChain = typesetChain
+    .then(async () => {
+      try {
+        if (container) {
+          typesetClear?.([container]);
+          await typesetPromise?.([container]);
+        } else {
+          typesetClear?.();
+          await typesetPromise?.();
+        }
+      } catch (e) {
+        console.warn('MathJax typesetting error:', e);
+      }
+    })
+    .catch((e) => {
+      console.warn('MathJax chain error:', e);
+    });
 }

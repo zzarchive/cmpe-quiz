@@ -114,6 +114,14 @@ export default function App() {
     setScreen('mode');
   }, []);
 
+  const handleCloseFormula = useCallback(() => {
+    setShowFormula(false);
+  }, []);
+
+  const handleCloseStudyGuide = useCallback(() => {
+    setShowStudyGuide(false);
+  }, []);
+
   // Escape key to close modals
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -224,14 +232,14 @@ export default function App() {
       {showFormula && formulas[quiz.courseId || ''] && (
         <FormulaSheet
           formulas={formulas[quiz.courseId || '']}
-          onClose={() => setShowFormula(false)}
+          onClose={handleCloseFormula}
         />
       )}
 
       {showStudyGuide && course?.studyGuides && (
         <StudyGuide
           guides={course.studyGuides}
-          onClose={() => setShowStudyGuide(false)}
+          onClose={handleCloseStudyGuide}
         />
       )}
     </div>
